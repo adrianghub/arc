@@ -39,7 +39,6 @@ jobs:
       - name: Install Amplify CLI
         run: npm install -g @aws-amplify/cli
 
-
       - name: Pull Amplify Backend
         working-directory: train-ticket-machine-frontend
         run: amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName dev --yes
