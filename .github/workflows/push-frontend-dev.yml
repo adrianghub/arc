@@ -38,4 +38,5 @@ jobs:
         run: npm install -g @aws-amplify/cli
 
       - name: Publish to AWS Amplify
+        id: publish
         run: amplify publish --yes
