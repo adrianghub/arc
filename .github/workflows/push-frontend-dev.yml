@@ -38,4 +38,14 @@ jobs:
         run: npm install -g @aws-amplify/cli
 
       - name: Publish to AWS Amplify
-        run: amplify publish --yes
+        id: publish
+        shell: bash
+        run: |
+          output=$(amplify publish --yes)
+          echo "$output"
+          published_url=$(echo "$output" | grep -o "https://[^ ]*")
+          echo "published_url=$published_url" >> $GITHUB_OUTPUT
+
+      - name: Display Published URL
+        run: |
+          echo "Published URL: ${{ steps.publish.outputs.published_url }}"
