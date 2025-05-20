@@ -1,6 +1,7 @@
 name: Push Frontend Dev - Build and Deploy to AWS Amplify
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - dev
