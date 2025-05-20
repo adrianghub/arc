@@ -50,4 +50,4 @@ Operational requirements:
 
 ## Flowchart diagram
 
-![Flowchart diagram](./docs/flowchart-diagram.png)
+![Flowchart diagram](./docs/flowchart-diagram.md)
