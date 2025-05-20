@@ -1,0 +1,27 @@
+name: PR Frontend Dev - Docker Build & Test
+
+on:
+  pull_request:
+    branches:
+      - dev
+    paths:
+      - 'train-ticket-machine-frontend/**'
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    environment: Development
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -f train-ticket-machine-frontend/Dockerfile.build -t train-ticket-machine-frontend:pr train-ticket-machine-frontend
+
+      - name: Run tests in Docker container
+        run: docker run --rm train-ticket-machine-frontend:pr npm run test
+
+      - name: Run test coverage in Docker container
+        run: docker run --rm train-ticket-machine-frontend:pr npm run coverage
