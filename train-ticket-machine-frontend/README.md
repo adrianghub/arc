@@ -5,17 +5,17 @@ Read this pdf for additional reference [Train Ticket Machine](./docs/train-ticke
 ## TODO
 
 - [x] Create a project from the template
-- [] Add necessary configuration for linting, formatting, testing, etc.
-- [] Add tool for components documentation
-- [] Configure unit tests
-- [] Setup CI/CD pipeline
+- [x] Add necessary configuration for linting, formatting, testing, etc.
+- [x] Add tool for components documentation
+- [x] Configure unit tests
+- [x] Dockerize the app
+- [x] Setup CI/CD pipeline
 - [] Add search for departure station
 - [] Add suggestion list
 - [] Add a result list
 - [] Handle errors and loading states
 - [] Add error and user interaction logging
 - [] Add A/B testing
-- [] Dockerize the app
 - [] Add search for arrival station
 - [] Display results of selected route (price, duration)
 
