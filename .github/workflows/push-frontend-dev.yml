@@ -1,19 +1,19 @@
 name: PR Frontend Dev - Docker Build & Test
 
 on:
-  pull_request:
+  push:
     branches:
       - dev
     paths:
       - 'train-ticket-machine-frontend/**'
       - '.github/workflows/**'
-  workflow_dispatch:
 
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
-    environment: Development
-    url: https://d2jdg3blz5bzw4.cloudfront.net
+    environment:
+      name: Development
+      url: https://d2jdg3blz5bzw4.cloudfront.net
     permissions: # Add permissions for OIDC
       id-token: write
       contents: read
@@ -30,9 +30,21 @@ jobs:
       - name: Run test coverage in Docker container
         run: docker run --rm train-ticket-machine-frontend:pr npm run coverage
 
+      - name: Create container to extract build output
+        run: docker create --name extract train-ticket-machine-frontend:pr
+
+      - name: Copy build output
+        run: docker cp extract:/app/dist ./dist
+
+      - name: Remove extraction container
+        run: docker rm extract
+
       - name: Sync with S3
         uses: ./.github/actions/aws-s3-sync
         with:
           bucket-name: ${{ secrets.S3_BUCKET_NAME }}
           cloudfront-distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
