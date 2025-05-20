@@ -1,0 +1,33 @@
+name: Sync directory with S3 bucket
+description: Composite action to configure AWS and deploy app bundle to S3
+
+inputs:
+  bucket-name:
+    description: 'S3 bucket name'
+    required: true
+  bundle-dir:
+    description: 'Bundle directory'
+    required: false
+    default: 'dist'
+  cloudfront-distribution-id:
+    description: 'CloudFront distribution ID'
+    required: true
+  aws-region:
+    description: 'AWS region'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4.1.0
+      with:
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Sync S3 bucket
+      run: aws s3 sync ${{ inputs.bundle-dir }} s3://${{ inputs.bucket-name }}
+      shell: bash
+
+    - name: Invalidate CloudFront Cache
+      run: aws cloudfront create-invalidation --distribution-id ${{ inputs.cloudfront-distribution-id }} --paths "/*"
+      shell: bash
