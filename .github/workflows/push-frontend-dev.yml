@@ -38,5 +38,8 @@ jobs:
       - name: Install Amplify CLI
         run: npm install -g @aws-amplify/cli
 
+      - name: Pull Amplify app
+        run: amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName dev
+
       - name: Publish to AWS Amplify
         run: amplify publish --yes
