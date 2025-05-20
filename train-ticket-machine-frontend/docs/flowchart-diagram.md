@@ -34,12 +34,24 @@ flowchart LR
   end
   style spacer fill:transparent,stroke:transparent,stroke-width:0px,height:0px
 
+    %% CI/CD and Deployment Subgraph
+  subgraph CICD[CI/CD]
+    direction LR
+    GIT[Git Repository] --> CI_SERVER["CI Server (GitHub Actions)"]
+    CI_SERVER -- Build --> BUILD_ARTIFACTS["Build Artifacts (Static Files)"]
+    BUILD_ARTIFACTS --> S3[AWS S3 Bucket]
+    S3 --> CF[AWS CloudFront]
+    CF --> USER_BROWSER[User Browser]
+  end
+
   %% Main Flow Connections
   A --> B
   B --> D
   D --> E
+
   %% Connect UI to Data & Caching
   E --> L
+
   %% Connect Data & Caching to Observability
   M --> O
   O --> P
@@ -48,4 +60,8 @@ flowchart LR
   B -.-> U
   D -.-> U
   E -.-> U
+
+  %% Connect Build artifacts to Deployment to show flow
+  BUILD_ARTIFACTS --> S3
+
 ```
