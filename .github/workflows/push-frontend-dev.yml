@@ -39,9 +39,26 @@ jobs:
       - name: Install Amplify CLI
         run: npm install -g @aws-amplify/cli
 
+      - name: Use custom amplify.yml configuration
+        run: cp train-ticket-machine-frontend/amplify.yml amplify.yml
+
+      - name: Initialize Amplify Environment
+        working-directory: train-ticket-machine-frontend
+        run: |
+          amplify init --yes \
+            --amplify "{\"projectName\":\"train-ticket-machine-frontend\",\"envName\":\"dev\"}" \
+            --frontend "{\"frontend\":\"javascript\",\"framework\":\"react\",\"config\":{\"SourceDir\":\"train-ticket-machine-frontend\",\"DistributionDir\":\"dist\",\"BuildCommand\":\"npm run build\",\"StartCommand\":\"npm start\"}}" \
+            --providers "{\"awscloudformation\":{\"configLevel\":\"project\",\"useProfile\":false,\"accessKeyId\":\"${{ secrets.AWS_ACCESS_KEY_ID }}\",\"secretAccessKey\":\"${{ secrets.AWS_SECRET_ACCESS_KEY }}\",\"region\":\"${{ secrets.AWS_REGION }}\"}}"
+
       - name: Pull Amplify Backend
         working-directory: train-ticket-machine-frontend
         run: amplify pull --appId ${{ secrets.AMPLIFY_APP_ID }} --envName dev --yes
+
+      - name: Set Amplify Environment
+        working-directory: train-ticket-machine-frontend
+        run: |
+          mkdir -p amplify/.config
+          echo '{"envName": "dev"}' > amplify/.config/local-env-info.json
 
       - name: Publish to AWS Amplify
         working-directory: train-ticket-machine-frontend
