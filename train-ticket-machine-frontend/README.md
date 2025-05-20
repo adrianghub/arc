@@ -53,6 +53,26 @@ Operational requirements:
 
 [Flowchart diagram](./docs/flowchart-diagram.md)
 
+## CI/CD
+
+The application is deployed as a static website. The CI/CD pipeline handles the build and deployment process:
+
+**1. Pull Request Workflow (CI):** Triggered on every pull request to the `dev` branch.
+    *   GitHub Actions checks out the code.
+    *   A Docker image is built.
+    *   Linters and formatters are run within the Docker container.
+    *   Unit and integration tests (including coverage) are executed within the Docker container.
+    *   This ensures code quality and stability before merging into `dev`.
+
+**2. Push to `dev` Workflow (CI/CD):** Triggered on every push to the `dev` branch.
+    *   **Continuous Integration:**
+        *   GitHub Actions checks out the code.
+        *   A Docker image is built.
+        *   Unit and integration tests (including coverage) are executed.
+    *   **Continuous Deployment:**
+        *   The production build of the application (`dist` folder) is extracted from the Docker container.
+        *   The built static assets (HTML, CSS, JavaScript, images) are uploaded to an **AWS S3 bucket** configured for static website hosting.
+        *   An **AWS CloudFront distribution**, fronting the S3 bucket, serves the content. Cache invalidation is handled to ensure users receive the latest version.
 
 ## Starter template overview
 
