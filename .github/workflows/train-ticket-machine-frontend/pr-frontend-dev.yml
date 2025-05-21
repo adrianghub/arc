@@ -18,8 +18,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
       - name: Build Docker image
         run: docker build -f train-ticket-machine-frontend/Dockerfile.build -t train-ticket-machine-frontend:pr train-ticket-machine-frontend
+
+      - name: Run linter in Docker container
+        run: docker run --rm train-ticket-machine-frontend:pr npm run lint
 
       - name: Run tests in Docker container
         run: docker run --rm train-ticket-machine-frontend:pr npm run test
