@@ -6,8 +6,7 @@ on:
       - dev
     paths:
       - 'train-ticket-machine-frontend/**'
-      - '.github/workflows/train-ticket-machine-frontend/**'
-
+      - '.github/workflows/push-frontend-dev.yml'
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
