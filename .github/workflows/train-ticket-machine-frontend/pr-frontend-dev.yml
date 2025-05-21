@@ -2,11 +2,12 @@ name: PR Frontend Dev - Docker Build & Test
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
     branches:
       - dev
     paths:
       - 'train-ticket-machine-frontend/**'
-      - '.github/workflows/**'
+      - '.github/workflows/train-ticket-machine-frontend/**'
   workflow_dispatch:
 
 jobs:

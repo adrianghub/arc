@@ -2,22 +2,6 @@
 
 Read this pdf for additional reference [Train Ticket Machine](./docs/train-ticket-machine-frontend-v2-2-.pdf)
 
-## TODO
-
-- [x] Create a project from the template
-- [x] Add necessary configuration for linting, formatting, testing, etc.
-- [x] Add tool for components documentation
-- [x] Configure unit tests
-- [x] Dockerize the app
-- [x] Setup CI/CD pipeline
-- [] Add search for departure station
-- [] Add suggestion list
-- [] Add a result list
-- [] Handle errors and loading states
-- [] Add error and user interaction logging
-- [] Add A/B testing
-- [] Add search for arrival station
-- [] Display results of selected route (price, duration)
 
 ## Assumptions
 
@@ -74,7 +58,49 @@ The application is deployed as a static website. The CI/CD pipeline handles the 
         *   The built static assets (HTML, CSS, JavaScript, images) are uploaded to an **AWS S3 bucket** configured for static website hosting.
         *   An **AWS CloudFront distribution**, fronting the S3 bucket, serves the content. Cache invalidation is handled to ensure users receive the latest version.
 
-## Starter template overview
+## Local Development
+
+During development, you have two options:
+
+1. **Run both the app and Storybook together:**
+   ```bash
+   npm run dev:all
+   ```
+   - Main app will be available at http://localhost:5173
+   - Going to http://localhost:5173/storybook will automatically redirect you to Storybook at http://localhost:6006
+
+2. **Run just Storybook:**
+   ```bash
+   npm run storybook
+   ```
+   This will start Storybook directly on port 6006, accessible at http://localhost:6006
+
+### Deployed version
+
+In production, Storybook is:
+- Built alongside the main application in a separate `dist/storybook` directory
+- Deployed to the `/storybook` path on the same domain
+- Available at https://d3i19dhhon0a88.cloudfront.net/storybook
+
+## TODO
+
+- [x] Create a project from the template
+- [x] Add necessary configuration for linting, formatting, testing, etc.
+- [x] Add tool for components documentation
+- [x] Configure unit tests
+- [x] Dockerize the app
+- [x] Setup CI/CD pipeline
+- [x] Configure Storybook on path /storybook
+- [] Add search for departure station
+- [] Add suggestion list
+- [] Add a result list
+- [] Handle errors and loading states
+- [] Add error and user interaction logging
+- [] Add A/B testing
+- [] Add search for arrival station
+- [] Display results of selected route (price, duration)
+
+## Note on the starter template
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

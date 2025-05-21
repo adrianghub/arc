@@ -6,14 +6,14 @@ on:
       - dev
     paths:
       - 'train-ticket-machine-frontend/**'
-      - '.github/workflows/**'
+      - '.github/workflows/train-ticket-machine-frontend/**'
 
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
     environment:
       name: Development
-      url: https://d2jdg3blz5bzw4.cloudfront.net
+      url: https://d3i19dhhon0a88.cloudfront.net
     permissions: # Add permissions for OIDC
       id-token: write
       contents: read
