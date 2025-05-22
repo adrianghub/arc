@@ -14,11 +14,7 @@ export interface SuggestionComboboxProps<T> {
   className?: string;
   id?: string;
   disabled?: boolean;
-  renderOption?: (
-    option: T,
-    isSelected: boolean,
-    isHighlighted: boolean
-  ) => React.ReactNode;
+  renderOption?: (option: T, isSelected: boolean, isHighlighted: boolean) => React.ReactNode;
 }
 
 export function SuggestionCombobox<T>({
@@ -36,8 +32,7 @@ export function SuggestionCombobox<T>({
 }: SuggestionComboboxProps<T>) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredSuggestions, setFilteredSuggestions] =
-    useState<T[]>(suggestions);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<T[]>(suggestions);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -50,7 +45,7 @@ export function SuggestionCombobox<T>({
       setFilteredSuggestions(suggestions);
     } else {
       const filtered = suggestions.filter((option) =>
-        getOptionLabel(option).toLowerCase().includes(searchTerm.toLowerCase())
+        getOptionLabel(option).toLowerCase().includes(searchTerm.toLowerCase()),
       );
       setFilteredSuggestions(filtered);
     }
@@ -62,7 +57,7 @@ export function SuggestionCombobox<T>({
     if (highlightedIndex >= 0 && listboxRef.current) {
       const listbox = listboxRef.current;
       const highlightedOption = listbox.querySelector(
-        `[data-index="${highlightedIndex}"]`
+        `[data-index="${highlightedIndex}"]`,
       ) as HTMLElement;
 
       if (highlightedOption) {
@@ -124,7 +119,7 @@ export function SuggestionCombobox<T>({
       case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prevIndex) =>
-          prevIndex < filteredSuggestions.length - 1 ? prevIndex + 1 : prevIndex
+          prevIndex < filteredSuggestions.length - 1 ? prevIndex + 1 : prevIndex,
         );
         break;
 
@@ -135,10 +130,7 @@ export function SuggestionCombobox<T>({
 
       case "Enter":
         e.preventDefault();
-        if (
-          highlightedIndex >= 0 &&
-          highlightedIndex < filteredSuggestions.length
-        ) {
+        if (highlightedIndex >= 0 && highlightedIndex < filteredSuggestions.length) {
           handleOptionSelect(filteredSuggestions[highlightedIndex]);
         }
         break;
@@ -175,79 +167,73 @@ export function SuggestionCombobox<T>({
       <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
         <Popover.Trigger asChild>
           <button
-            type='button'
+            type="button"
             ref={triggerRef}
             onClick={handleToggle}
-            className={`flex items-center justify-between w-full min-h-[56px] px-4 py-3 text-left rounded-lg border bg-gray-700 text-base sm:text-lg ${
-              selectedOption
-                ? "border-indigo-500 text-white"
-                : "border-gray-600 text-gray-400"
+            className={`flex min-h-[56px] w-full items-center justify-between rounded-lg border bg-gray-700 px-4 py-3 text-left text-base sm:text-lg ${
+              selectedOption ? "border-indigo-500 text-white" : "border-gray-600 text-gray-400"
             }`}
-            aria-haspopup='listbox'
+            aria-haspopup="listbox"
             aria-expanded={isOpen}
             id={id}
             disabled={disabled}
           >
-            <span className='truncate'>{selectedLabel || placeholder}</span>
+            <span className="truncate">{selectedLabel || placeholder}</span>
             <ChevronDown
-              className={`h-5 w-5 transition-transform ${
-                isOpen ? "transform rotate-180" : ""
-              }`}
+              className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180 transform" : ""}`}
             />
           </button>
         </Popover.Trigger>
 
         <Popover.Content
-          className='bg-gray-800 rounded-lg shadow-lg z-50 border border-gray-700 data-[side=bottom]:mt-1 max-w-[95vw] sm:max-w-[85vw] md:max-w-none p-0 overflow-hidden'
+          className="z-50 max-w-[95vw] overflow-hidden rounded-lg border border-gray-700 bg-gray-800 p-0 shadow-lg data-[side=bottom]:mt-1 sm:max-w-[85vw] md:max-w-none"
           sideOffset={5}
-          align='start'
+          align="start"
           style={{ width: "var(--radix-popover-trigger-width)" }}
           onOpenAutoFocus={(event) => event.preventDefault()}
         >
-          <div className='flex flex-col'>
+          <div className="flex flex-col">
             {/* Search input */}
-            <div className='p-2 border-b border-gray-700 relative'>
-              <div className='relative'>
-                <Search className='h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400' />
+            <div className="relative border-b border-gray-700 p-2">
+              <div className="relative">
+                <Search className="absolute top-1/2 left-3 h-5 w-5 -translate-y-1/2 transform text-gray-400" />
                 <Input
-                  type='text'
+                  type="text"
                   placeholder={searchPlaceholder}
                   value={searchTerm}
                   onChange={handleSearchInputChange}
                   onKeyDown={handleKeyDown}
                   ref={searchInputRef}
-                  className='bg-gray-900 border-gray-700 pl-10 py-2 text-sm mb-0'
-                  autoComplete='off'
+                  className="mb-0 border-gray-700 bg-gray-900 py-2 pl-10 text-sm"
+                  autoComplete="off"
                 />
               </div>
             </div>
 
             {/* Suggestions list */}
             <div
-              className='max-h-[300px] overflow-y-auto'
+              className="max-h-[300px] overflow-y-auto"
               ref={listboxRef}
-              role='listbox'
+              role="listbox"
               aria-labelledby={id}
               tabIndex={-1}
               onKeyDown={handleKeyDown}
             >
               {selectedOption && (
                 <div
-                  className='px-3 py-2.5 border-b border-gray-600 flex justify-between items-center hover:bg-gray-700 cursor-pointer'
+                  className="flex cursor-pointer items-center justify-between border-b border-gray-600 px-3 py-2.5 hover:bg-gray-700"
                   onClick={handleClearSelection}
                   ref={selectedItemRef}
                   tabIndex={0}
-                  role='button'
-                  aria-pressed='true'
+                  role="button"
+                  aria-pressed="true"
                   onKeyDown={handleSelectedItemKeyDown}
                 >
-                  <div className='flex items-center'>
-                    <Check className='h-5 w-5 mr-2 text-indigo-400' />
-                    <span className='text-indigo-200 font-medium'>
-                      {selectedLabel}
-                    </span>
+                  <div className="flex items-center">
+                    <Check className="mr-2 h-5 w-5 text-indigo-400" />
+                    <span className="font-medium text-indigo-200">{selectedLabel}</span>
                   </div>
-                  <X className='h-5 w-5 text-gray-400' />
+                  <X className="h-5 w-5 text-gray-400" />
                 </div>
               )}
 
@@ -256,8 +242,7 @@ export function SuggestionCombobox<T>({
                   {filteredSuggestions.map((option, index) => {
                     const isHighlighted = index === highlightedIndex;
                     const isSelected = selectedOption
-                      ? getOptionLabel(option) ===
-                        getOptionLabel(selectedOption)
+                      ? getOptionLabel(option) === getOptionLabel(selectedOption)
                       : false;
 
                     if (isSelected && selectedOption) {
@@ -268,29 +253,21 @@ export function SuggestionCombobox<T>({
                       <div
                         key={index}
                         data-index={index}
-                        role='option'
+                        role="option"
                         aria-selected={isHighlighted || isSelected}
                         onClick={() => handleOptionSelect(option)}
-                        className={`px-3 py-2.5 cursor-pointer ${
-                          isHighlighted ? "bg-gray-700" : ""
-                        } ${
+                        className={`cursor-pointer px-3 py-2.5 ${isHighlighted ? "bg-gray-700" : ""} ${
                           isSelected
-                            ? "text-indigo-200 bg-indigo-900/50 font-medium"
+                            ? "bg-indigo-900/50 font-medium text-indigo-200"
                             : "text-gray-200 hover:bg-gray-700"
-                        } ${
-                          index < filteredSuggestions.length - 1
-                            ? "border-b border-gray-700/50"
-                            : ""
-                        }`}
+                        } ${index < filteredSuggestions.length - 1 ? "border-b border-gray-700/50" : ""}`}
                         tabIndex={-1}
                       >
                         {renderOption ? (
                           renderOption(option, isSelected, isHighlighted)
                         ) : (
-                          <div className='flex items-center'>
-                            {isSelected && (
-                              <Check className='h-5 w-5 mr-2 text-indigo-400' />
-                            )}
+                          <div className="flex items-center">
+                            {isSelected && <Check className="mr-2 h-5 w-5 text-indigo-400" />}
                             {getOptionLabel(option)}
                           </div>
                         )}
@@ -299,9 +276,7 @@ export function SuggestionCombobox<T>({
                   })}
                 </div>
               ) : (
-                <div className='px-3 py-4 text-gray-400 text-center'>
-                  {noResultsMessage}
-                </div>
+                <div className="px-3 py-4 text-center text-gray-400">{noResultsMessage}</div>
               )}
             </div>
           </div>
@@ -310,8 +285,8 @@ export function SuggestionCombobox<T>({
 
       {selectedOption && !isOpen && (
         <button
-          type='button'
-          className='sr-only'
+          type="button"
+          className="sr-only"
           aria-label={`Remove selection: ${selectedLabel}`}
           tabIndex={0}
           onClick={handleClearSelection}

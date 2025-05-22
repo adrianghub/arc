@@ -2,13 +2,7 @@ import { Search } from "lucide-react";
 import React, { useState } from "react";
 import { getStations } from "../../dummy-data/station-list";
 import { Button } from "../common/Button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormLabel,
-  FormSubmit,
-} from "../common/Form";
+import { Form, FormControl, FormField, FormLabel, FormSubmit } from "../common/Form";
 import StationSuggestionCombobox from "./StationSuggestionCombobox";
 
 const DEPARTURE_STATION_FIELD_NAME = "departureStation";
@@ -17,9 +11,7 @@ interface StationSearchFormProps {
   onStationSelect?: (station: string) => void;
 }
 
-export const StationSearchForm: React.FC<StationSearchFormProps> = ({
-  onStationSelect,
-}) => {
+export const StationSearchForm: React.FC<StationSearchFormProps> = ({ onStationSelect }) => {
   const [selectedStation, setSelectedStation] = useState<string | null>(null);
 
   const handleStationSelect = (station: string | null) => {
@@ -37,37 +29,34 @@ export const StationSearchForm: React.FC<StationSearchFormProps> = ({
 
   return (
     <Form
-      title='Train Ticket Machine'
-      subtitle='Find your departure station'
+      title="Find your departure station"
       onSubmit={handleSubmit}
-      maxWidth='lg'
-      className='touch-manipulation px-2 sm:px-4 w-full'
+      maxWidth="lg"
+      className="w-full touch-manipulation px-2 sm:px-4"
     >
-      <FormField name={DEPARTURE_STATION_FIELD_NAME} className='relative'>
-        <div className='flex flex-col space-y-1'>
-          <FormLabel className='text-base font-medium text-gray-300'>
-            Departure Station
-          </FormLabel>
+      <FormField name={DEPARTURE_STATION_FIELD_NAME} className="relative">
+        <div className="flex flex-col space-y-1">
+          <FormLabel className="text-base font-medium text-gray-300">Departure Station</FormLabel>
           <FormControl asChild>
             <StationSuggestionCombobox
               stations={getStations()}
               selectedStation={selectedStation}
               onStationSelect={handleStationSelect}
-              id='departure-station'
+              id="departure-station"
             />
           </FormControl>
         </div>
       </FormField>
 
-      <div className='flex justify-center pt-6'>
+      <div className="flex justify-center pt-6">
         <FormSubmit asChild>
           <Button
-            size='lg'
+            size="lg"
             fullWidth
             disabled={!selectedStation}
-            className='py-4 text-base sm:text-lg'
+            className="py-4 text-base sm:text-lg"
           >
-            <Search className='h-5 w-5 mr-2' />
+            <Search className="mr-2 h-5 w-5" />
             Search Stations
           </Button>
         </FormSubmit>

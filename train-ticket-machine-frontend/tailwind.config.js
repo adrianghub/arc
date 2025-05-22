@@ -4,4 +4,5 @@ export default {
     './src/**/*.{js,jsx,ts,tsx}',
     './.storybook/**/*.{js,jsx,ts,tsx}',
   ],
+  plugins: [],
 };

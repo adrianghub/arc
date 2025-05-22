@@ -27,7 +27,7 @@ const meta: Meta<typeof StationSuggestionCombobox> = {
   },
   decorators: [
     (Story) => (
-      <div className='p-4 w-[350px]'>
+      <div className="w-[350px] p-4">
         <Story />
       </div>
     ),
@@ -46,7 +46,7 @@ const SelectionDemo = ({ selected = null }: { selected?: string | null }) => {
       stations={getStations(5)}
       selectedStation={selectedStation}
       onStationSelect={(station) => setSelectedStation(station || "")}
-      placeholder='Select a station...'
+      placeholder="Select a station..."
     />
   );
 };
@@ -56,7 +56,7 @@ export const Default: Story = {
 };
 
 export const WithSelection: Story = {
-  render: () => <SelectionDemo selected='Test Station 1' />,
+  render: () => <SelectionDemo selected="Test Station 1" />,
 };
 
 export const EmptyState: Story = {

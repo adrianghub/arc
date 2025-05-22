@@ -5,9 +5,7 @@ import type { StationAPIResponse, StationUIModel } from "./station";
 const STATIONS_API_URL =
   "https://raw.githubusercontent.com/abax-as/coding-challenge/master/station_codes.json";
 
-export function mapStationAPIResponseToUIModel(
-  station: StationAPIResponse
-): StationUIModel {
+export function mapStationAPIResponseToUIModel(station: StationAPIResponse): StationUIModel {
   return {
     name: station.stationName,
     code: station.stationCode,
@@ -15,13 +13,13 @@ export function mapStationAPIResponseToUIModel(
 }
 
 export function mapStationListAPIResponseToUIModel(
-  stations: StationAPIResponse[]
+  stations: StationAPIResponse[],
 ): StationUIModel[] {
   return stations.map(mapStationAPIResponseToUIModel);
 }
 
 export async function fetchStationsAPIData(
-  fetcher: Fetcher = defaultFetcher
+  fetcher: Fetcher = defaultFetcher,
 ): Promise<StationAPIResponse[]> {
   try {
     const data = await fetcher<StationAPIResponse[]>(STATIONS_API_URL);
@@ -44,9 +42,7 @@ export async function fetchStationsAPIData(
  * @param fetcher The fetcher implementation to use (defaults to default fetcher).
  * @returns A promise that resolves to an array of StationUIModel objects.
  */
-export async function fetchStations(
-  fetcher: Fetcher = defaultFetcher
-): Promise<StationUIModel[]> {
+export async function fetchStations(fetcher: Fetcher = defaultFetcher): Promise<StationUIModel[]> {
   const apiData = await fetchStationsAPIData(fetcher);
   return mapStationListAPIResponseToUIModel(apiData);
 }

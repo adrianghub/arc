@@ -12,7 +12,6 @@ const meta: Meta<typeof Form> = {
   tags: ["autodocs"],
   argTypes: {
     title: { control: "text" },
-    subtitle: { control: "text" },
     maxWidth: {
       control: "select",
       options: ["sm", "md", "lg", "xl", "full"],
@@ -32,20 +31,10 @@ export const Default: Story = {
     maxWidth: "lg",
     children: (
       <>
-        <Input
-          id='email'
-          label='Email'
-          type='email'
-          placeholder='Enter your email'
-        />
-        <Input
-          id='password'
-          label='Password'
-          type='password'
-          placeholder='Enter your password'
-        />
-        <div className='flex justify-end'>
-          <Button type='submit'>Submit</Button>
+        <Input id="email" label="Email" type="email" placeholder="Enter your email" />
+        <Input id="password" label="Password" type="password" placeholder="Enter your password" />
+        <div className="flex justify-end">
+          <Button type="submit">Submit</Button>
         </div>
       </>
     ),
@@ -55,18 +44,12 @@ export const Default: Story = {
 export const WithSubtitle: Story = {
   args: {
     title: "Create Account",
-    subtitle: "Fill in your details to get started",
     children: (
       <>
-        <Input id='name' label='Full Name' placeholder='Enter your full name' />
-        <Input
-          id='email'
-          label='Email Address'
-          type='email'
-          placeholder='your@email.com'
-        />
-        <div className='flex justify-end'>
-          <Button type='submit'>Register</Button>
+        <Input id="name" label="Full Name" placeholder="Enter your full name" />
+        <Input id="email" label="Email Address" type="email" placeholder="your@email.com" />
+        <div className="flex justify-end">
+          <Button type="submit">Register</Button>
         </div>
       </>
     ),
@@ -76,14 +59,13 @@ export const WithSubtitle: Story = {
 export const TouchFriendly: Story = {
   args: {
     title: "Search Trains",
-    subtitle: "Tap to find available trains",
     maxWidth: "lg",
     children: (
       <>
-        <Input id='from' label='From' placeholder='Departure station' />
-        <Input id='to' label='To' placeholder='Arrival station' />
-        <div className='flex justify-center'>
-          <Button type='submit' size='lg' fullWidth>
+        <Input id="from" label="From" placeholder="Departure station" />
+        <Input id="to" label="To" placeholder="Arrival station" />
+        <div className="flex justify-center">
+          <Button type="submit" size="lg" fullWidth>
             Search
           </Button>
         </div>
@@ -99,12 +81,12 @@ export const WideForm: Story = {
     maxWidth: "xl",
     children: (
       <>
-        <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-          <Input id='departure-date' label='Departure Date' type='date' />
-          <Input id='departure-time' label='Departure Time' type='time' />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Input id="departure-date" label="Departure Date" type="date" />
+          <Input id="departure-time" label="Departure Time" type="time" />
         </div>
-        <div className='flex justify-center'>
-          <Button type='submit' variant='primary'>
+        <div className="flex justify-center">
+          <Button type="submit" variant="primary">
             Confirm
           </Button>
         </div>

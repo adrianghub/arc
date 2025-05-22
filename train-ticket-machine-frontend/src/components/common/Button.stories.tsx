@@ -22,8 +22,7 @@ const meta: Meta<typeof Button> = {
     },
     fullWidth: {
       control: "boolean",
-      description:
-        "Whether the button should take up the full width of its container",
+      description: "Whether the button should take up the full width of its container",
     },
     onClick: { action: "clicked" },
     disabled: { control: "boolean" },
@@ -104,16 +103,14 @@ export const Disabled: Story = {
   },
   decorators: [
     () => (
-      <div className='flex flex-col gap-4 w-[350px]'>
+      <div className="flex w-[350px] flex-col gap-4">
         <div>
-          <p className='mb-2 text-sm font-medium'>
-            Primary - Enabled (for comparison)
-          </p>
-          <Button variant='primary'>Primary Button</Button>
+          <p className="mb-2 text-sm font-medium">Primary - Enabled (for comparison)</p>
+          <Button variant="primary">Primary Button</Button>
         </div>
         <div>
-          <p className='mb-2 text-sm font-medium'>Primary - Disabled</p>
-          <Button variant='primary' disabled>
+          <p className="mb-2 text-sm font-medium">Primary - Disabled</p>
+          <Button variant="primary" disabled>
             Primary Button
           </Button>
         </div>
@@ -126,7 +123,7 @@ export const WithIcon: Story = {
   args: {
     children: (
       <>
-        <PlusSquare className='h-5 w-5 mr-2' />
+        <PlusSquare className="mr-2 h-5 w-5" />
         Add New
       </>
     ),

@@ -37,7 +37,7 @@ const meta: Meta<typeof SuggestionCombobox> = {
   },
   decorators: [
     (Story) => (
-      <div className='p-4 w-[350px]'>
+      <div className="w-[350px] p-4">
         <Story />
       </div>
     ),
@@ -61,25 +61,23 @@ const SelectionStateDemo = () => {
   const [selected, setSelected] = React.useState("Test Station 2");
 
   return (
-    <div className='flex flex-col gap-4'>
-      <div className='p-2 border border-gray-600 rounded bg-gray-800'>
-        <h3 className='font-medium text-white mb-2'>
-          Selected: {selected || "None"}
-        </h3>
+    <div className="flex flex-col gap-4">
+      <div className="rounded border border-gray-600 bg-gray-800 p-2">
+        <h3 className="mb-2 font-medium text-white">Selected: {selected || "None"}</h3>
         <SuggestionCombobox
           suggestions={TEST_STRINGS}
           getOptionLabel={(item: string) => item}
           selectedOption={selected}
           onSelect={(option) => setSelected(option as string)}
-          placeholder='Select test'
-          searchPlaceholder='Search test...'
+          placeholder="Select test"
+          searchPlaceholder="Search test..."
         />
       </div>
-      <div className='text-sm text-gray-300'>
-        <ul className='list-disc pl-5'>
+      <div className="text-sm text-gray-300">
+        <ul className="list-disc pl-5">
           <li>Selected value appears in the button</li>
           <li>In dropdown, the selected item has:</li>
-          <ul className='list-circle pl-5'>
+          <ul className="list-circle pl-5">
             <li>A checkmark icon</li>
             <li>Indigo background</li>
             <li>Bold text</li>
@@ -117,22 +115,12 @@ export const WithCustomRendering: Story = {
     getOptionLabel: (item: TestItem) => item.name,
     placeholder: "Select test",
     searchPlaceholder: "Search test...",
-    renderOption: (
-      item: TestItem,
-      isSelected: boolean,
-      isHighlighted: boolean
-    ) => (
-      <div
-        className={`flex items-center ${isHighlighted ? "bg-gray-700" : ""}`}
-      >
-        {isSelected && <Check className='h-5 w-5 mr-2 text-indigo-400' />}
-        <div className='flex flex-col'>
-          <span
-            className={`font-medium ${isSelected ? "text-indigo-200" : ""}`}
-          >
-            {item.name}
-          </span>
-          <span className='text-xs text-gray-400'>{item.value}</span>
+    renderOption: (item: TestItem, isSelected: boolean, isHighlighted: boolean) => (
+      <div className={`flex items-center ${isHighlighted ? "bg-gray-700" : ""}`}>
+        {isSelected && <Check className="mr-2 h-5 w-5 text-indigo-400" />}
+        <div className="flex flex-col">
+          <span className={`font-medium ${isSelected ? "text-indigo-200" : ""}`}>{item.name}</span>
+          <span className="text-xs text-gray-400">{item.value}</span>
         </div>
       </div>
     ),

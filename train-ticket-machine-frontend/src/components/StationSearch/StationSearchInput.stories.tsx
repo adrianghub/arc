@@ -37,7 +37,7 @@ const ControlledStationSearchInput = () => {
     <StationSearchInput
       value={value}
       onChange={(newValue) => setValue(newValue)}
-      placeholder='Enter departure station'
+      placeholder="Enter departure station"
     />
   );
 };

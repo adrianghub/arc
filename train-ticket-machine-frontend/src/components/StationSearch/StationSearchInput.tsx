@@ -5,29 +5,22 @@ import { Input } from "../common/Input";
 interface StationSearchInputProps extends Omit<InputProps, "onChange"> {
   value: string;
   onChange: (value: string) => void;
-  helpText?: string;
 }
 
-const StationSearchInput: React.FC<StationSearchInputProps> = ({
-  value,
-  onChange,
-  helpText,
-  ...rest
-}) => {
+const StationSearchInput: React.FC<StationSearchInputProps> = ({ value, onChange, ...rest }) => {
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     onChange(event.target.value);
   };
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       <Input
-        type='text'
-        placeholder='Enter departure station'
+        type="text"
+        placeholder="Enter departure station"
         value={value}
         onChange={handleChange}
         {...rest}
       />
-      {helpText && <div className='mt-1 text-xs text-gray-400'>{helpText}</div>}
     </div>
   );
 };
