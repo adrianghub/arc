@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Button from "./Button";
+import { PlusSquare } from "lucide-react";
+import { Button } from "./Button";
 
 const meta: Meta<typeof Button> = {
   title: "Common/Button",
@@ -77,7 +78,7 @@ export const FullWidth: Story = {
     size: "lg",
   },
   parameters: {
-    layout: "padded",
+    layout: "centered",
   },
 };
 
@@ -88,7 +89,7 @@ export const TouchFriendly: Story = {
     className: "mt-2",
   },
   parameters: {
-    layout: "padded",
+    layout: "centered",
   },
 };
 
@@ -96,27 +97,36 @@ export const Disabled: Story = {
   args: {
     children: "Disabled Button",
     disabled: true,
+    variant: "primary",
   },
+  parameters: {
+    layout: "centered",
+  },
+  decorators: [
+    () => (
+      <div className='flex flex-col gap-4 w-[350px]'>
+        <div>
+          <p className='mb-2 text-sm font-medium'>
+            Primary - Enabled (for comparison)
+          </p>
+          <Button variant='primary'>Primary Button</Button>
+        </div>
+        <div>
+          <p className='mb-2 text-sm font-medium'>Primary - Disabled</p>
+          <Button variant='primary' disabled>
+            Primary Button
+          </Button>
+        </div>
+      </div>
+    ),
+  ],
 };
 
 export const WithIcon: Story = {
   args: {
     children: (
       <>
-        <svg
-          xmlns='http://www.w3.org/2000/svg'
-          className='h-5 w-5 mr-2'
-          fill='none'
-          viewBox='0 0 24 24'
-          stroke='currentColor'
-        >
-          <path
-            strokeLinecap='round'
-            strokeLinejoin='round'
-            strokeWidth={2}
-            d='M12 6v6m0 0v6m0-6h6m-6 0H6'
-          />
-        </svg>
+        <PlusSquare className='h-5 w-5 mr-2' />
         Add New
       </>
     ),

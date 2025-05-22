@@ -1,19 +1,24 @@
+import React, { useId } from "react";
+
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  id: string;
+  id?: string;
   error?: string;
-  helpText?: string;
+  ref?: React.Ref<HTMLInputElement>;
 }
 
-const Input: React.FC<InputProps> = ({
+export const Input: React.FC<InputProps> = ({
   label,
-  id,
+  id: providedId,
   className,
   error,
-  helpText,
+  ref,
   ...props
 }) => {
+  const generatedId = useId();
+  const id = providedId || generatedId;
+
   const baseClasses =
     "mt-1 block w-full bg-gray-700 border rounded-lg shadow-sm py-3.5 px-4 text-white placeholder-gray-400 " +
     "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 " +
@@ -35,14 +40,10 @@ const Input: React.FC<InputProps> = ({
         id={id}
         className={`${baseClasses} ${borderClasses} ${className || ""}`}
         aria-invalid={error ? "true" : "false"}
+        ref={ref}
         {...props}
       />
       {error && <p className='mt-2 text-sm text-red-500'>{error}</p>}
-      {helpText && !error && (
-        <p className='mt-2 text-sm text-gray-400'>{helpText}</p>
-      )}
     </div>
   );
 };
-
-export default Input;

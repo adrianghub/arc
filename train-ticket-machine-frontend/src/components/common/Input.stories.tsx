@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Input from "./Input";
+import { Input } from "./Input";
 
 const meta: Meta<typeof Input> = {
   title: "Common/Input",
@@ -17,7 +17,6 @@ const meta: Meta<typeof Input> = {
     },
     placeholder: { control: "text" },
     error: { control: "text" },
-    helpText: { control: "text" },
     disabled: { control: "boolean" },
   },
   decorators: [
@@ -43,28 +42,18 @@ export const Default: Story = {
 export const WithLabel: Story = {
   args: {
     id: "input-with-label",
-    label: "Your Name",
-    placeholder: "E.g., Ada Lovelace",
-  },
-};
-
-export const WithHelpText: Story = {
-  args: {
-    id: "input-with-help",
-    label: "Email Address",
-    type: "email",
-    placeholder: "your@email.com",
-    helpText: "We'll never share your email with anyone else",
+    label: "Station Name",
+    placeholder: "E.g., Test Station",
   },
 };
 
 export const WithError: Story = {
   args: {
     id: "input-with-error",
-    label: "Password",
+    label: "Station Name",
     type: "password",
-    placeholder: "Enter password",
-    error: "Password must be at least 8 characters",
+    placeholder: "E.g., Test Station",
+    error: "Station name must be at least 3 characters",
   },
 };
 
@@ -72,8 +61,7 @@ export const TouchFriendly: Story = {
   args: {
     id: "touch-friendly-input",
     label: "Destination",
-    placeholder: "Where are you going?",
-    helpText: "Tap to select your destination",
+    placeholder: "E.g., Test Station",
   },
 };
 
@@ -81,7 +69,7 @@ export const Disabled: Story = {
   args: {
     id: "disabled-input",
     label: "Disabled Input",
-    placeholder: "Cannot type here",
+    placeholder: "E.g., Test Station",
     disabled: true,
   },
 };
@@ -90,7 +78,7 @@ export const Search: Story = {
   args: {
     id: "search-input",
     type: "search",
-    placeholder: "Search stations...",
+    placeholder: "Search station...",
     label: "Find Station",
   },
 };

@@ -1,4 +1,4 @@
-import StationSearchForm from "./components/StationSearch/StationSearchForm";
+import { StationSearchForm } from "./components/StationSearch/StationSearchForm";
 
 function App() {
   return (

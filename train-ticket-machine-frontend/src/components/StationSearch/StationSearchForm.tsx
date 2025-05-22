@@ -1,60 +1,77 @@
-import { useState } from "react";
-import Button from "../common/Button";
-import Form from "../common/Form";
-import Input from "../common/Input";
+import { Search } from "lucide-react";
+import React, { useState } from "react";
+import { getStations } from "../../dummy-data/station-list";
+import { Button } from "../common/Button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormLabel,
+  FormSubmit,
+} from "../common/Form";
+import StationSuggestionCombobox from "./StationSuggestionCombobox";
 
-const StationSearchForm = () => {
-  const [station, setStation] = useState("");
+const DEPARTURE_STATION_FIELD_NAME = "departureStation";
 
-  const handleStationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStation(e.target.value);
+interface StationSearchFormProps {
+  onStationSelect?: (station: string) => void;
+}
+
+export const StationSearchForm: React.FC<StationSearchFormProps> = ({
+  onStationSelect,
+}) => {
+  const [selectedStation, setSelectedStation] = useState<string | null>(null);
+
+  const handleStationSelect = (station: string | null) => {
+    setSelectedStation(station);
+
+    if (onStationSelect && station) {
+      onStationSelect(station);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would trigger a search with the station data
-    console.log("Searching for station:", station);
+    console.log("Searching for station:", selectedStation);
   };
 
   return (
     <Form
-      title='Find Your Departure Station'
-      subtitle='Tap to search for available stations'
+      title='Train Ticket Machine'
+      subtitle='Find your departure station'
       onSubmit={handleSubmit}
       maxWidth='lg'
-      className='touch-manipulation'
+      className='touch-manipulation px-2 sm:px-4 w-full'
     >
-      <Input
-        id='departure'
-        name='departure'
-        placeholder='Enter departure station...'
-        aria-label='Departure Station'
-        helpText='Start typing to see matching stations'
-        autoComplete='off'
-        value={station}
-        onChange={handleStationChange}
-      />
-      <div className='flex justify-center pt-4'>
-        <Button type='submit' size='lg' fullWidth disabled={!station.trim()}>
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            className='h-5 w-5 mr-2'
-            fill='none'
-            viewBox='0 0 24 24'
-            stroke='currentColor'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth={2}
-              d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+      <FormField name={DEPARTURE_STATION_FIELD_NAME} className='relative'>
+        <div className='flex flex-col space-y-1'>
+          <FormLabel className='text-base font-medium text-gray-300'>
+            Departure Station
+          </FormLabel>
+          <FormControl asChild>
+            <StationSuggestionCombobox
+              stations={getStations()}
+              selectedStation={selectedStation}
+              onStationSelect={handleStationSelect}
+              id='departure-station'
             />
-          </svg>
-          Search Stations
-        </Button>
+          </FormControl>
+        </div>
+      </FormField>
+
+      <div className='flex justify-center pt-6'>
+        <FormSubmit asChild>
+          <Button
+            size='lg'
+            fullWidth
+            disabled={!selectedStation}
+            className='py-4 text-base sm:text-lg'
+          >
+            <Search className='h-5 w-5 mr-2' />
+            Search Stations
+          </Button>
+        </FormSubmit>
       </div>
     </Form>
   );
 };
-
-export default StationSearchForm;

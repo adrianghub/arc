@@ -3,14 +3,17 @@ export interface ButtonProps
   variant?: "primary" | "secondary" | "danger";
   size?: "sm" | "md" | "lg";
   fullWidth?: boolean;
+  ref?: React.Ref<HTMLButtonElement>;
 }
 
-const Button: React.FC<ButtonProps> = ({
+export const Button: React.FC<ButtonProps> = ({
   children,
   className,
   variant = "primary",
   size = "md",
   fullWidth = false,
+  disabled = false,
+  ref,
   ...props
 }) => {
   const baseClasses =
@@ -35,17 +38,21 @@ const Button: React.FC<ButtonProps> = ({
 
   const widthClass = fullWidth ? "w-full" : "";
 
+  const disabledClasses = disabled
+    ? "opacity-50 cursor-not-allowed pointer-events-none"
+    : "";
+
   return (
     <button
       type='button'
       className={`${baseClasses} ${variantClasses[variant]} ${
         sizeClasses[size]
-      } ${widthClass} ${className || ""}`}
+      } ${widthClass} ${disabledClasses} ${className || ""}`}
+      disabled={disabled}
+      ref={ref}
       {...props}
     >
       {children}
     </button>
   );
 };
-
-export default Button;

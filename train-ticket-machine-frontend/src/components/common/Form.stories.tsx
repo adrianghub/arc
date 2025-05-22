@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import Button from "./Button";
-import Form from "./Form";
-import Input from "./Input";
+import { Button } from "./Button";
+import { Form } from "./Form";
+import { Input } from "./Input";
 
 const meta: Meta<typeof Form> = {
   title: "Common/Form",
@@ -29,6 +29,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     title: "Sample Form",
+    maxWidth: "lg",
     children: (
       <>
         <Input
@@ -63,7 +64,6 @@ export const WithSubtitle: Story = {
           label='Email Address'
           type='email'
           placeholder='your@email.com'
-          helpText="We'll never share your email"
         />
         <div className='flex justify-end'>
           <Button type='submit'>Register</Button>
