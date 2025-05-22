@@ -38,6 +38,14 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
   const listboxRef = useRef<HTMLDivElement>(null);
   const selectedItemRef = useRef<HTMLDivElement>(null);
 
+  const handleClearInput = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSearchTerm("");
+    if (searchInputRef.current) {
+      searchInputRef.current.focus();
+    }
+  };
+
   const handleToggle = () => {
     if (disabled) return;
 
@@ -180,9 +188,22 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
                     onKeyDown={handleKeyDown}
                     ref={searchInputRef}
                     className="mb-0 border-gray-700 bg-gray-900 py-2 text-base"
-                    style={{ paddingLeft: "2.5rem", paddingRight: "1.5rem" }}
+                    style={{
+                      paddingLeft: "2.5rem",
+                      paddingRight: searchTerm ? "2.5rem" : "1.5rem",
+                    }}
                     autoComplete="off"
                   />
+                  {searchTerm && (
+                    <button
+                      type="button"
+                      onClick={handleClearInput}
+                      className="absolute top-1/2 right-3 -translate-y-1/2 transform text-gray-400 hover:text-gray-200 focus:text-gray-200 focus:outline-none"
+                      aria-label="Clear search"
+                    >
+                      <X className="h-5 w-5" />
+                    </button>
+                  )}
                   {nextCharSuggestion && (
                     <div
                       className="pointer-events-none absolute top-1/2 -translate-y-1/2 transform"
@@ -301,5 +322,3 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
     </div>
   );
 };
-
-export default StationSuggestionCombobox;
