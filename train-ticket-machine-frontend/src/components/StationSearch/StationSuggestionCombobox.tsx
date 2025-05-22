@@ -1,6 +1,6 @@
 import * as Popover from "@radix-ui/react-popover";
 import { Check, ChevronDown, Search, X } from "lucide-react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useStationSuggestions } from "../../hooks/useStationSuggestions";
 import { renderStationWithHighlight } from "../../utils/renderStationHighlight";
 import { Input } from "../common/Input";
@@ -27,6 +27,7 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
+  const [searchTermWidth, setSearchTermWidth] = useState(0);
 
   const { filteredStations, nextCharSuggestion, availableNextChars } = useStationSuggestions({
     stations,
@@ -37,6 +38,13 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listboxRef = useRef<HTMLDivElement>(null);
   const selectedItemRef = useRef<HTMLDivElement>(null);
+  const measurementSpanRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (measurementSpanRef.current) {
+      setSearchTermWidth(measurementSpanRef.current.offsetWidth);
+    }
+  }, [searchTerm]);
 
   const handleClearInput = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -193,6 +201,9 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
                       paddingRight: searchTerm ? "2.5rem" : "1.5rem",
                     }}
                     autoComplete="off"
+                    aria-autocomplete="list"
+                    aria-controls="station-suggestions"
+                    aria-expanded={isOpen}
                   />
                   {searchTerm && (
                     <button
@@ -208,12 +219,25 @@ export const StationSuggestionCombobox: React.FC<StationSuggestionComboboxProps>
                     <div
                       className="pointer-events-none absolute top-1/2 -translate-y-1/2 transform"
                       style={{
-                        left: `calc(2.5rem + ${searchTerm.length}ch - 2px)`,
+                        left: `calc(2.5rem + ${searchTermWidth}px)`,
                       }}
                     >
                       <span className="text-base text-gray-500">{nextCharSuggestion}</span>
                     </div>
                   )}
+                  <span
+                    ref={measurementSpanRef}
+                    className="text-base"
+                    style={{
+                      position: "absolute",
+                      visibility: "hidden",
+                      whiteSpace: "pre",
+                      left: "-100vw",
+                      top: "-100vh",
+                    }}
+                  >
+                    {searchTerm}
+                  </span>
                 </div>
               </div>
             </div>

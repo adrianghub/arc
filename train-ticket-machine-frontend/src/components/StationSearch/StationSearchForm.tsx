@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { getStations } from "../../dummy-data/station-list";
 import { Button } from "../common/Button";
 import { Form, FormControl, FormField, FormLabel, FormSubmit } from "../common/Form";
-import StationSuggestionCombobox from "./StationSuggestionCombobox";
+import { StationSuggestionCombobox } from "./StationSuggestionCombobox";
 
 const DEPARTURE_STATION_FIELD_NAME = "departureStation";
 

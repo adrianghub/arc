@@ -37,7 +37,7 @@ export function renderStationWithHighlight(station: string, searchTerm: string) 
 
     // Add the matched text
     result.push(
-      <span key={`match-${i}`} className="font-medium text-white">
+      <span key={`match-${i}`} className="font-medium">
         {station.substring(start, end)}
       </span>,
     );
