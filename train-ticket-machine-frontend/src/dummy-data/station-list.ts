@@ -1,9 +1,11 @@
-const stationNames: string[] = [];
-
-for (let i = 1; i <= 60; i++) {
-  stationNames.push(`${Math.random().toString(36).substring(2, 15)} Station ${i}`);
+interface StationData {
+  stationCode: string;
+  stationName: string;
 }
 
-export const getStations = (count?: number): string[] => {
-  return count ? stationNames.slice(0, count) : stationNames;
+// Import the station data
+import stationData from "./station_codes.json";
+
+export const getStationData = (count?: number): StationData[] => {
+  return count ? (stationData as StationData[]).slice(0, count) : (stationData as StationData[]);
 };
