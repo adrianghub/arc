@@ -6,10 +6,10 @@ interface SelectedStationItemProps {
   onClearSelection: (e?: React.MouseEvent | React.KeyboardEvent) => void;
 }
 
-export const SelectedStationItem: React.FC<SelectedStationItemProps> = ({
+export const SelectedStationItem = ({
   selectedStation,
   onClearSelection,
-}) => {
+}: SelectedStationItemProps) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
       case "Enter":

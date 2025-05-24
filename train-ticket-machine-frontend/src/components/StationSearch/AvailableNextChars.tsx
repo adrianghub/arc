@@ -2,7 +2,7 @@ interface AvailableNextCharsProps {
   availableNextChars: string[];
 }
 
-export const AvailableNextChars: React.FC<AvailableNextCharsProps> = ({ availableNextChars }) => {
+export const AvailableNextChars = ({ availableNextChars }: AvailableNextCharsProps) => {
   if (availableNextChars.length === 0) {
     return null;
   }

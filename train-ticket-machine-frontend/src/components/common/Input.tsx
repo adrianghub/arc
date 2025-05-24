@@ -7,14 +7,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   ref?: React.Ref<HTMLInputElement>;
 }
 
-export const Input: React.FC<InputProps> = ({
-  label,
-  id: providedId,
-  className,
-  error,
-  ref,
-  ...props
-}) => {
+export const Input = ({ label, id: providedId, className, error, ref, ...props }: InputProps) => {
   const generatedId = useId();
   const id = providedId || generatedId;
 

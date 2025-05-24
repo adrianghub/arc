@@ -1,48 +1,74 @@
 import { Search } from "lucide-react";
-import React, { useState } from "react";
-import type { StationUIModel } from "../../api/station";
-import { getStationData } from "../../mock-data/station-list";
-import { addRecentSearch } from "../../utils/recentSearches";
+import React, { useCallback } from "react";
+import { useStationsContext } from "../../context/useStationsContext";
 import { Button } from "../common/Button";
+import { ErrorDisplay } from "../common/ErrorDisplay";
 import { Form, FormControl, FormField, FormLabel, FormSubmit } from "../common/Form";
+import { LoadingIndicator } from "../common/LoadingIndicator";
 import { StationCombobox } from "./StationCombobox";
 
 const DEPARTURE_STATION_FIELD_NAME = "departureStation";
 
 interface StationSearchFormProps {
   onStationSelect?: (station: string) => void;
-  onSubmit?: (station: StationUIModel) => void;
+  onSubmit?: () => void;
 }
 
-export const StationSearchForm: React.FC<StationSearchFormProps> = ({
-  onStationSelect,
-  onSubmit,
-}) => {
-  const [selectedStation, setSelectedStation] = useState<StationUIModel | null>(null);
+export const StationSearchForm = ({ onStationSelect, onSubmit }: StationSearchFormProps) => {
+  const {
+    stations,
+    selectedStation,
+    selectStation,
+    clearSelectedStation,
+    isLoading,
+    error,
+    isError,
+    hasRecentStations,
+    refetch,
+  } = useStationsContext();
 
-  const handleStationSelect = (station: StationUIModel | null) => {
-    setSelectedStation(station);
-
-    if (onStationSelect && station) {
-      onStationSelect(station.name);
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (selectedStation) {
-      addRecentSearch({
-        name: selectedStation.name,
-        code: selectedStation.code,
-      });
-
-      if (onSubmit) {
-        onSubmit(selectedStation);
+  const handleStationSelect = useCallback(
+    (station: typeof selectedStation) => {
+      if (station) {
+        selectStation(station);
+        if (onStationSelect) {
+          onStationSelect(station.name);
+        }
+      } else {
+        clearSelectedStation();
       }
+    },
+    [selectStation, clearSelectedStation, onStationSelect],
+  );
 
-      setSelectedStation(null);
-    }
-  };
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      if (selectedStation) {
+        if (onSubmit) {
+          onSubmit();
+        }
+      }
+    },
+    [selectedStation, onSubmit],
+  );
+
+  if (isLoading && !hasRecentStations) {
+    return (
+      <div className="flex w-full flex-col items-center justify-center py-12">
+        <LoadingIndicator size={32} />
+        <p className="mt-4 text-center text-gray-500">Loading stations...</p>
+      </div>
+    );
+  }
+
+  if (isError && !hasRecentStations) {
+    return (
+      <div className="w-full max-w-lg px-4">
+        <ErrorDisplay error={error} onRetry={refetch} />
+      </div>
+    );
+  }
 
   return (
     <Form
@@ -56,10 +82,11 @@ export const StationSearchForm: React.FC<StationSearchFormProps> = ({
           <FormLabel className="text-base font-medium text-gray-300">Departure Station</FormLabel>
           <FormControl asChild>
             <StationCombobox
-              stations={getStationData()}
+              stations={stations}
               selectedStation={selectedStation}
               onStationSelect={handleStationSelect}
               id="departure-station"
+              placeholder="Tap to search stations..."
             />
           </FormControl>
         </div>

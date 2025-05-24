@@ -1,13 +1,19 @@
 import { useState } from "react";
 import type { StationUIModel } from "./api/station";
+import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ChosenStationDisplay } from "./components/StationSearch/ChosenStationDisplay";
 import { StationSearchForm } from "./components/StationSearch/StationSearchForm";
+import { useStationsContext } from "./context/useStationsContext";
 
 function App() {
+  const { selectedStation, clearSelectedStation } = useStationsContext();
   const [submittedStation, setSubmittedStation] = useState<StationUIModel | null>(null);
 
-  const handleStationSubmit = (station: StationUIModel) => {
-    setSubmittedStation(station);
+  const handleSubmit = () => {
+    if (selectedStation) {
+      setSubmittedStation(selectedStation);
+      clearSelectedStation();
+    }
   };
 
   return (
@@ -16,8 +22,10 @@ function App() {
         <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">Train Ticket Machine</h1>
       </header>
       <main className="flex w-full touch-manipulation flex-col items-center justify-center">
-        <StationSearchForm onSubmit={handleStationSubmit} />
-        <ChosenStationDisplay station={submittedStation} />
+        <ErrorBoundary>
+          <StationSearchForm onSubmit={handleSubmit} />
+          <ChosenStationDisplay station={submittedStation} />
+        </ErrorBoundary>
       </main>
     </div>
   );

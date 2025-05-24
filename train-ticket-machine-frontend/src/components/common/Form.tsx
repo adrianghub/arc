@@ -6,7 +6,7 @@ export interface FormProps extends RadixForm.FormProps {
   children: React.ReactNode;
 }
 
-const Form: React.FC<FormProps> = ({ children, className, title, maxWidth = "lg", ...props }) => {
+const Form = ({ children, className, title, maxWidth = "lg", ...props }: FormProps) => {
   const maxWidthClasses = {
     sm: "max-w-sm",
     md: "max-w-md",

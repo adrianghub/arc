@@ -1,69 +1,140 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { useState } from "react";
+import type { Meta, StoryFn } from "@storybook/react";
+import React from "react";
+import { useGhostText } from "../../hooks/useGhostText";
 import { StationSearchInput } from "./StationSearchInput";
 
-const meta: Meta<typeof StationSearchInput> = {
-  title: "StationSearch/SearchInput",
+const meta = {
+  title: "StationSearch/StationSearchInput",
   component: StationSearchInput,
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
-  argTypes: {
-    value: { control: "text" },
-    onChange: { action: "changed" },
-    placeholder: { control: "text" },
-    className: { control: "text" },
-    disabled: { control: "boolean" },
-    "aria-expanded": { control: "boolean" },
-  },
-  decorators: [
-    (Story) => (
-      <div style={{ width: "400px" }}>
-        <Story />
-      </div>
-    ),
-  ],
-};
+  decorators: [(Story) => <div style={{ width: "400px" }}>{Story()}</div>],
+} satisfies Meta<typeof StationSearchInput>;
 
 export default meta;
 
-type Story = StoryObj<typeof meta>;
+const DefaultTemplate: StoryFn<typeof StationSearchInput> = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
 
-// Basic example with controlled component wrapper
-const ControlledStationSearchInput = () => {
-  const [value, setValue] = useState("");
+  const {
+    ghostTextRef,
+    measurementRef,
+    inputRef: searchInputRef,
+    updateGhostTextPosition,
+  } = useGhostText({
+    inputValue: searchTerm,
+    suggestion: "",
+  });
+
   return (
     <StationSearchInput
-      value={value}
-      onChange={(newValue) => setValue(newValue)}
-      placeholder="Enter departure station"
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+      searchInputRef={searchInputRef}
+      ghostTextRef={ghostTextRef}
+      measurementRef={measurementRef}
+      nextCharSuggestion={null}
+      handleKeyDown={() => {}}
+      updateGhostTextPosition={updateGhostTextPosition}
     />
   );
 };
 
-export const Default: Story = {
-  render: () => <ControlledStationSearchInput />,
+export const Default = {
+  render: DefaultTemplate,
 };
 
-export const Empty: Story = {
-  args: {
-    value: "",
-    placeholder: "Search for stations...",
-  },
+const WithGhostTextTemplate: StoryFn<typeof StationSearchInput> = () => {
+  const [searchTerm, setSearchTerm] = React.useState("lond");
+
+  const {
+    ghostTextRef,
+    measurementRef,
+    inputRef: searchInputRef,
+    updateGhostTextPosition,
+  } = useGhostText({
+    inputValue: searchTerm,
+    suggestion: "on",
+  });
+
+  return (
+    <StationSearchInput
+      searchTerm={searchTerm}
+      setSearchTerm={setSearchTerm}
+      searchInputRef={searchInputRef}
+      ghostTextRef={ghostTextRef}
+      measurementRef={measurementRef}
+      nextCharSuggestion="on"
+      handleKeyDown={() => {}}
+      updateGhostTextPosition={updateGhostTextPosition}
+    />
+  );
 };
 
-export const WithValue: Story = {
-  args: {
-    value: "Stockholm",
-    placeholder: "Enter departure station",
-  },
+export const WithGhostText = {
+  render: WithGhostTextTemplate,
 };
 
-export const Disabled: Story = {
-  args: {
-    value: "",
-    placeholder: "Enter departure station",
-    disabled: true,
-  },
+const InteractiveDemoTemplate: StoryFn<typeof StationSearchInput> = () => {
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const [nextCharSuggestion, setNextCharSuggestion] = React.useState<string | null>(null);
+
+  const {
+    ghostTextRef,
+    measurementRef,
+    inputRef: searchInputRef,
+    updateGhostTextPosition,
+  } = useGhostText({
+    inputValue: searchTerm,
+    suggestion: nextCharSuggestion || "",
+  });
+
+  // This simulates finding a suggestion based on input
+  React.useEffect(() => {
+    if (searchTerm === "l") {
+      setNextCharSuggestion("ondon");
+    } else if (searchTerm === "lo") {
+      setNextCharSuggestion("ndon");
+    } else if (searchTerm === "lon") {
+      setNextCharSuggestion("don");
+    } else if (searchTerm === "lond") {
+      setNextCharSuggestion("on");
+    } else if (searchTerm === "londo") {
+      setNextCharSuggestion("n");
+    } else {
+      setNextCharSuggestion(null);
+    }
+  }, [searchTerm]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Tab" && nextCharSuggestion && !e.shiftKey) {
+      e.preventDefault();
+      const newValue = searchTerm + nextCharSuggestion;
+      setSearchTerm(newValue);
+    }
+  };
+
+  return (
+    <>
+      <p style={{ marginBottom: "10px", fontSize: "14px" }}>
+        Try typing "l", "lo", "lon", etc. and press Tab to complete the suggestion
+      </p>
+      <StationSearchInput
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        searchInputRef={searchInputRef}
+        ghostTextRef={ghostTextRef}
+        measurementRef={measurementRef}
+        nextCharSuggestion={nextCharSuggestion}
+        handleKeyDown={handleKeyDown}
+        updateGhostTextPosition={updateGhostTextPosition}
+      />
+    </>
+  );
+};
+
+export const InteractiveDemo = {
+  render: InteractiveDemoTemplate,
 };
