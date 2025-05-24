@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ChosenStationDisplay } from "./ChosenStationDisplay";
 
 const meta: Meta<typeof ChosenStationDisplay> = {
-  title: "Components/ChosenStationDisplay",
+  title: "StationSearch/ChosenStationDisplay",
   component: ChosenStationDisplay,
   parameters: {
     layout: "centered",

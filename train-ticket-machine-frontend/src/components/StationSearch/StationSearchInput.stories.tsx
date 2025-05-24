@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useState } from "react";
-import StationSearchInput from "./StationSearchInput";
+import { StationSearchInput } from "./StationSearchInput";
 
 const meta: Meta<typeof StationSearchInput> = {
   title: "StationSearch/SearchInput",
@@ -57,17 +57,6 @@ export const WithValue: Story = {
   args: {
     value: "Stockholm",
     placeholder: "Enter departure station",
-  },
-};
-
-export const WithAriaAttributes: Story = {
-  args: {
-    value: "Stock",
-    placeholder: "Enter departure station",
-    "aria-expanded": true,
-    "aria-controls": "suggestion-list",
-    "aria-autocomplete": "list",
-    role: "combobox",
   },
 };
 

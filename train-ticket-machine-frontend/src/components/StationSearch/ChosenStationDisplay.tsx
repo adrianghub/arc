@@ -1,4 +1,4 @@
-import type { StationUIModel } from "../api/station";
+import type { StationUIModel } from "../../api/station";
 
 export const ChosenStationDisplay = ({ station }: { station: StationUIModel | null }) => {
   if (!station) return null;

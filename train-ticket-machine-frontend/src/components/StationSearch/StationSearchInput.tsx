@@ -7,7 +7,11 @@ interface StationSearchInputProps extends Omit<InputProps, "onChange"> {
   onChange: (value: string) => void;
 }
 
-const StationSearchInput: React.FC<StationSearchInputProps> = ({ value, onChange, ...rest }) => {
+export const StationSearchInput: React.FC<StationSearchInputProps> = ({
+  value,
+  onChange,
+  ...rest
+}) => {
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (event) => {
     onChange(event.target.value);
   };
@@ -24,5 +28,3 @@ const StationSearchInput: React.FC<StationSearchInputProps> = ({ value, onChange
     </div>
   );
 };
-
-export default StationSearchInput;

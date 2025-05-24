@@ -54,34 +54,6 @@ export const Default: Story = {
   args: {},
 };
 
-export const WithClickableSuggestions: Story = {
-  args: {
-    suggestionsVariant: "clickable",
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Variant A: Uses clickable character pills that users can tap to append to their search input.",
-      },
-    },
-  },
-};
-
-export const WithNonClickableSuggestions: Story = {
-  args: {
-    suggestionsVariant: "non-clickable",
-  },
-  parameters: {
-    docs: {
-      description: {
-        story:
-          "Variant B: Uses non-clickable character pills that only serve as an informational display.",
-      },
-    },
-  },
-};
-
 export const Desktop: Story = {
   parameters: {
     viewport: {

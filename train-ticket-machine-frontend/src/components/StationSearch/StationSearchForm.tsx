@@ -1,30 +1,47 @@
 import { Search } from "lucide-react";
 import React, { useState } from "react";
-import { getStations } from "../../dummy-data/station-list";
+import type { StationUIModel } from "../../api/station";
+import { getStationData } from "../../mock-data/station-list";
+import { addRecentSearch } from "../../utils/recentSearches";
 import { Button } from "../common/Button";
 import { Form, FormControl, FormField, FormLabel, FormSubmit } from "../common/Form";
-import { StationSuggestionCombobox } from "./StationSuggestionCombobox";
+import { StationCombobox } from "./StationCombobox";
 
 const DEPARTURE_STATION_FIELD_NAME = "departureStation";
 
 interface StationSearchFormProps {
   onStationSelect?: (station: string) => void;
+  onSubmit?: (station: StationUIModel) => void;
 }
 
-export const StationSearchForm: React.FC<StationSearchFormProps> = ({ onStationSelect }) => {
-  const [selectedStation, setSelectedStation] = useState<string | null>(null);
+export const StationSearchForm: React.FC<StationSearchFormProps> = ({
+  onStationSelect,
+  onSubmit,
+}) => {
+  const [selectedStation, setSelectedStation] = useState<StationUIModel | null>(null);
 
-  const handleStationSelect = (station: string | null) => {
+  const handleStationSelect = (station: StationUIModel | null) => {
     setSelectedStation(station);
 
     if (onStationSelect && station) {
-      onStationSelect(station);
+      onStationSelect(station.name);
     }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Searching for station:", selectedStation);
+    if (selectedStation) {
+      addRecentSearch({
+        name: selectedStation.name,
+        code: selectedStation.code,
+      });
+
+      if (onSubmit) {
+        onSubmit(selectedStation);
+      }
+
+      setSelectedStation(null);
+    }
   };
 
   return (
@@ -38,8 +55,8 @@ export const StationSearchForm: React.FC<StationSearchFormProps> = ({ onStationS
         <div className="flex flex-col space-y-1">
           <FormLabel className="text-base font-medium text-gray-300">Departure Station</FormLabel>
           <FormControl asChild>
-            <StationSuggestionCombobox
-              stations={getStations()}
+            <StationCombobox
+              stations={getStationData()}
               selectedStation={selectedStation}
               onStationSelect={handleStationSelect}
               id="departure-station"
