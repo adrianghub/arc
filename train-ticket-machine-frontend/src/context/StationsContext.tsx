@@ -67,6 +67,10 @@ export function StationsProvider({ children }: StationsProviderProps) {
     dispatch({ type: "SELECT_STATION", payload: station });
   }, []);
 
+  const submitStation = useCallback((station: StationUIModel) => {
+    dispatch({ type: "SUBMIT_STATION", payload: station });
+  }, []);
+
   const clearSelectedStation = useCallback(() => {
     dispatch({ type: "CLEAR_SELECTED_STATION" });
   }, []);
@@ -94,6 +98,7 @@ export function StationsProvider({ children }: StationsProviderProps) {
     hasRecentStations: state.hasRecentStations || Boolean(queryHasRecentStations),
     setSearchTerm,
     selectStation,
+    submitStation,
     clearSelectedStation,
     refetch: handleRefetch,
     dispatch,

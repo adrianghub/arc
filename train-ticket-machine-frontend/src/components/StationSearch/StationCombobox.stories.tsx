@@ -32,6 +32,7 @@ const createMockContextState = (overrides?: Partial<StationsState>): StationsCon
   refetch: async () => ({}),
   setSearchTerm: () => {},
   selectStation: () => {},
+  submitStation: () => {},
   clearSelectedStation: () => {},
   selectedStation: null,
   dispatch: () => {},

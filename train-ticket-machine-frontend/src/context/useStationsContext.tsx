@@ -5,6 +5,7 @@ import type { StationsAction, StationsState } from "./StationsReducer";
 export interface StationsContextValue extends StationsState {
   setSearchTerm: (term: string) => void;
   selectStation: (station: StationUIModel) => void;
+  submitStation: (station: StationUIModel) => void;
   clearSelectedStation: () => void;
   refetch: () => Promise<unknown>;
   dispatch: React.Dispatch<StationsAction>;

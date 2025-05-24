@@ -9,7 +9,6 @@ export function ReactQueryDevTools() {
   const [showDevtools, setShowDevtools] = useState(false);
 
   useEffect(() => {
-    // Check both conditions regardless of environment
     const isDevelopment = process.env.NODE_ENV === "development";
     const showDevToolsFromUrl = window.location.search.includes("react_query_devtools=true");
 
