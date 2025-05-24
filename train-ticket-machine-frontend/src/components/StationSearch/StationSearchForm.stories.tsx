@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { StationsProvider } from "../../context/StationsContext";
 import { StationSearchForm } from "./StationSearchForm";
+
+const queryClient = new QueryClient();
 
 const meta: Meta<typeof StationSearchForm> = {
   title: "StationSearch/StationSearchForm",
@@ -26,7 +30,7 @@ const meta: Meta<typeof StationSearchForm> = {
             - Variant B: Non-clickable informational display
 
           ### Usage Instructions:
-          1. Type to see station suggestions and next character predictions
+          1. Type to see stations and next character suggestions
           2. Use Tab or Enter to accept suggested characters
           3. Use arrow keys or mouse to select a station
           4. Selected station stays highlighted for clarity
@@ -37,11 +41,15 @@ const meta: Meta<typeof StationSearchForm> = {
   tags: ["autodocs"],
   decorators: [
     (Story) => (
-      <div className="mx-auto flex w-full max-w-screen-lg justify-center px-2 py-2 sm:px-4 sm:py-4 md:px-8 md:py-8">
-        <div className="w-full sm:w-[500px] md:w-[650px]">
-          <Story />
-        </div>
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <StationsProvider>
+          <div className="mx-auto flex w-full max-w-screen-lg justify-center px-2 py-2 sm:px-4 sm:py-4 md:px-8 md:py-8">
+            <div className="w-full sm:w-[500px] md:w-[650px]">
+              <Story />
+            </div>
+          </div>
+        </StationsProvider>
+      </QueryClientProvider>
     ),
   ],
 };

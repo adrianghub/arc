@@ -50,52 +50,6 @@ export const LongStationName: Story = {
   },
 };
 
-export const NoStation: Story = {
-  args: {
-    station: null,
-  },
-  parameters: {
-    docs: {
-      description: {
-        story: "When no station is provided, the component renders nothing.",
-      },
-    },
-  },
-};
-
-export const MultipleExamples: Story = {
-  render: () => (
-    <div className="flex flex-col space-y-6">
-      <ChosenStationDisplay
-        station={{
-          name: "London Paddington",
-          code: "PAD",
-        }}
-      />
-      <ChosenStationDisplay
-        station={{
-          name: "Birmingham New Street",
-          code: "BHM",
-        }}
-      />
-      <ChosenStationDisplay
-        station={{
-          name: "Edinburgh Waverley",
-          code: "EDB",
-        }}
-      />
-    </div>
-  ),
-  parameters: {
-    docs: {
-      description: {
-        story: "Multiple examples showing different stations.",
-      },
-    },
-  },
-};
-
-// Add a story to demonstrate different length station names
 export const VariousNameLengths: Story = {
   render: () => (
     <div className="flex max-w-[400px] flex-col space-y-6">

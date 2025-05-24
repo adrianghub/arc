@@ -1,22 +1,14 @@
-import * as Popover from "@radix-ui/react-popover";
-import { ChevronDown, Search } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import { AlertCircle, RefreshCw } from "lucide-react";
+import React, { useEffect, useRef } from "react";
 import type { StationUIModel } from "../../api/station";
+import { useStationsContext } from "../../context/useStationsContext";
 import { useGhostText } from "../../hooks/useGhostText";
 import { useKeyboardNavigation } from "../../hooks/useKeyboardNavigation";
-import { highlightStationText } from "../../utils/highlightStationText";
-import {
-  addRecentSearch,
-  getRecentSearches,
-  RECENT_STATION_SEARCHES_KEY,
-} from "../../utils/recentSearches";
-import {
-  filterStations,
-  getAvailableNextChars,
-  getNextCharSuggestion,
-} from "../../utils/stationFiltering";
 import { AvailableNextChars } from "./AvailableNextChars";
 import { SelectedStationItem } from "./SelectedStationItem";
+import { StationComboboxTriggerButton } from "./StationComboboxTriggerButton";
+import { StationList } from "./StationList";
+import { StationSearchInput } from "./StationSearchInput";
 
 export interface StationComboboxProps {
   stations: StationUIModel[];
@@ -28,36 +20,38 @@ export interface StationComboboxProps {
   disabled?: boolean;
 }
 
-export const StationCombobox: React.FC<StationComboboxProps> = ({
-  stations,
-  selectedStation,
+export const StationCombobox = ({
+  selectedStation: externalSelectedStation,
   onStationSelect,
   placeholder = "Select station...",
   className = "",
   id,
   disabled = false,
-}) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [recentSearches, setRecentSearches] = useState<StationUIModel[]>(() => {
-    const initialRecent = getRecentSearches();
-    return initialRecent.filter((item) => {
-      return stations.some((s) => s.code === item.code);
-    });
-  });
-
+}: StationComboboxProps) => {
   const triggerRef = useRef<HTMLButtonElement>(null);
   const listboxRef = useRef<HTMLDivElement>(null);
 
-  const allStationsWithRecent = [
-    ...recentSearches,
-    ...stations.filter((station) => !recentSearches.some((recent) => recent.code === station.code)),
-  ];
+  const isControlled = externalSelectedStation !== undefined;
 
-  const filteredStations = filterStations(allStationsWithRecent, searchTerm);
+  const {
+    searchTerm,
+    setSearchTerm,
+    filteredStations,
+    selectedStation: contextSelectedStation,
+    nextCharSuggestion,
+    availableNextChars,
+    recentStations,
+    isLoading,
+    isError,
+    hasRecentStations,
+    refetch,
+    selectStation: contextSelectStation,
+    clearSelectedStation: contextClearSelectedStation,
+  } = useStationsContext();
 
-  const nextCharSuggestion = getNextCharSuggestion(filteredStations, searchTerm);
-  const availableNextChars = getAvailableNextChars(filteredStations, searchTerm);
+  const selectedStation = isControlled ? externalSelectedStation : contextSelectedStation;
+
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const {
     ghostTextRef,
@@ -81,21 +75,6 @@ export const StationCombobox: React.FC<StationComboboxProps> = ({
   });
 
   useEffect(() => {
-    const handleStorageChange = (event: StorageEvent) => {
-      if (event.key === RECENT_STATION_SEARCHES_KEY) {
-        const recentStations = getRecentSearches().filter((item) => {
-          return stations.some((s) => s.code === item.code);
-        });
-        setRecentSearches(recentStations);
-      }
-    };
-    window.addEventListener("storage", handleStorageChange);
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-    };
-  }, [stations]);
-
-  useEffect(() => {
     if (highlightedIndex >= 0 && listboxRef.current) {
       const highlightedElement = listboxRef.current.querySelector(
         `[data-index="${highlightedIndex}"]`,
@@ -116,23 +95,26 @@ export const StationCombobox: React.FC<StationComboboxProps> = ({
   }, [highlightedIndex]);
 
   useEffect(() => {
-    updateGhostTextPosition();
-  }, [searchTerm, updateGhostTextPosition]);
+    if (isOpen && searchInputRef.current) {
+      // Use a slight delay to ensure the DOM is ready
+      searchInputRef.current?.focus();
+    }
+  }, [isOpen, searchInputRef]);
 
   const handleStationSelect = (station: StationUIModel | null) => {
-    onStationSelect(station);
-    setIsOpen(false);
-    setSearchTerm("");
-
-    if (station) {
-      const updatedRecentSearches = addRecentSearch(station);
-      const recentStations = updatedRecentSearches.filter((item) => {
-        return stations.some((s) => s.code === item.code);
-      });
-      setRecentSearches(recentStations);
+    if (!isControlled) {
+      if (station) {
+        contextSelectStation(station);
+      } else {
+        contextClearSelectedStation();
+      }
     }
 
+    onStationSelect(station);
+    setIsOpen(false);
+
     if (triggerRef.current) {
+      // Focus the trigger button after a short delay to avoid immediate focus loss
       setTimeout(() => {
         triggerRef.current?.focus();
       }, 10);
@@ -143,7 +125,6 @@ export const StationCombobox: React.FC<StationComboboxProps> = ({
     if (e.key === "Tab" && nextCharSuggestion && !e.shiftKey) {
       e.preventDefault();
 
-      // Immediately set the new value
       const newValue = searchTerm + nextCharSuggestion;
       setSearchTerm(newValue);
 
@@ -159,186 +140,102 @@ export const StationCombobox: React.FC<StationComboboxProps> = ({
       return;
     }
 
+    if (e.key === "Enter" && filteredStations.length === 1 && !selectedStation) {
+      e.preventDefault();
+      handleStationSelect(filteredStations[0]);
+      return;
+    }
+
     if (isOpen) {
       handleNavKeyDown(e);
     }
   };
 
-  const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
-
-    if (!open) {
-      setSearchTerm("");
-    }
-  };
-
   const isStationRecent = (station: StationUIModel) => {
-    return recentSearches.some((s) => s.code === station.code);
+    return recentStations.some((s) => s.code === station.code);
   };
 
   return (
     <div className={`relative ${className}`}>
-      <Popover.Root open={isOpen} onOpenChange={handleOpenChange} modal={true}>
-        <Popover.Trigger asChild disabled={disabled}>
+      {isLoading && !hasRecentStations && (
+        <div className="flex h-[56px] w-full items-center justify-center rounded-lg border border-gray-600 bg-gray-700">
+          <span className="text-gray-400">Loading stations...</span>
+        </div>
+      )}
+
+      {isError && !hasRecentStations && (
+        <div className="flex h-[56px] w-full items-center justify-center gap-2 rounded-lg border border-red-600 bg-gray-700 px-4 py-2">
+          <div className="flex items-center text-red-400">
+            <AlertCircle className="mr-2 h-4 w-4" />
+            <span>Error loading stations</span>
+          </div>
           <button
-            type="button"
-            ref={triggerRef}
-            onClick={() => setIsOpen(true)}
-            className={`flex min-h-[56px] w-full items-center justify-between rounded-lg border bg-gray-700 px-4 py-3 text-left text-base sm:text-lg ${
-              selectedStation ? "border-indigo-500 text-white" : "border-gray-600 text-gray-400"
-            }`}
-            aria-haspopup="listbox"
-            aria-expanded={isOpen}
+            onClick={() => refetch()}
+            className="flex items-center rounded-sm bg-red-900/30 px-3 py-1.5 text-xs text-red-200 hover:bg-red-900/40"
+          >
+            <RefreshCw className="mr-1.5 h-3 w-3" />
+            Try again
+          </button>
+        </div>
+      )}
+
+      {!((isLoading || isError) && !hasRecentStations) && (
+        <div className="relative w-full">
+          <StationComboboxTriggerButton
+            triggerRef={triggerRef}
+            isOpen={isOpen}
+            selectedStation={selectedStation}
+            placeholder={placeholder}
             id={id}
             disabled={disabled}
-          >
-            <div className="flex flex-col truncate">
-              <span className="truncate">{selectedStation?.name || placeholder}</span>
-              {selectedStation && (
-                <span className="truncate text-sm text-gray-400">{selectedStation.code}</span>
-              )}
-            </div>
-            <ChevronDown
-              className={`h-5 w-5 transition-transform ${isOpen ? "rotate-180 transform" : ""}`}
-            />
-          </button>
-        </Popover.Trigger>
+            onClick={() => setIsOpen(!isOpen)}
+          />
 
-        <Popover.Portal>
-          <Popover.Content
-            className="z-50 max-w-[95vw] overflow-hidden rounded-lg border border-gray-700 bg-gray-800 p-0 shadow-lg data-[side=bottom]:mt-1 sm:max-w-[85vw] md:max-w-none"
-            sideOffset={5}
-            align="start"
-            style={{ width: "var(--radix-popover-trigger-width)" }}
-            onOpenAutoFocus={(e) => {
-              e.preventDefault();
-              setTimeout(() => {
-                searchInputRef.current?.focus();
-              }, 0);
-            }}
-            onCloseAutoFocus={(e) => {
-              e.preventDefault();
-              if (triggerRef.current) {
-                triggerRef.current.focus();
-              }
-            }}
-          >
-            <div className="flex flex-col">
-              <div className="relative border-b border-gray-700 p-2">
-                <div className="relative">
-                  <Search className="absolute top-1/2 left-3 z-10 h-5 w-5 -translate-y-1/2 transform text-gray-300" />
-                  <input
-                    type="text"
-                    placeholder="Search by name or code..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyDown={handleKeyDown}
-                    ref={searchInputRef}
-                    className="w-full rounded-md border border-gray-700 bg-gray-900 py-2 pr-4 pl-10 text-sm text-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
-                    autoComplete="off"
-                  />
-
-                  {/* Ghost text suggestion */}
-                  {nextCharSuggestion && searchTerm && (
-                    <div
-                      ref={ghostTextRef}
-                      className="absolute text-sm text-gray-500"
-                      style={{
-                        pointerEvents: "none",
-                      }}
-                    >
-                      {nextCharSuggestion}
-                    </div>
-                  )}
-
-                  <span
-                    ref={measurementRef}
-                    style={{
-                      position: "absolute",
-                      visibility: "hidden",
-                      whiteSpace: "pre",
-                      left: "-100vw",
-                      top: "-100vh",
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    {searchTerm}
-                  </span>
-                </div>
-              </div>
-
-              {isOpen && availableNextChars.length > 0 && (
-                <div className="border-t border-gray-700">
-                  <AvailableNextChars availableNextChars={availableNextChars} />
-                </div>
-              )}
-
-              {selectedStation && (
-                <SelectedStationItem
-                  selectedStation={selectedStation.name}
-                  onClearSelection={() => handleStationSelect(null)}
+          {isOpen && (
+            <div className="absolute z-50 mt-2 w-full rounded-lg border border-gray-700 bg-gray-800 shadow-lg">
+              <div className="flex flex-col">
+                <StationSearchInput
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  searchInputRef={searchInputRef}
+                  ghostTextRef={ghostTextRef}
+                  measurementRef={measurementRef}
+                  nextCharSuggestion={nextCharSuggestion}
+                  handleKeyDown={handleKeyDown}
+                  updateGhostTextPosition={updateGhostTextPosition}
                 />
-              )}
 
-              {isOpen && (
-                <div
-                  className="max-h-[300px] overflow-y-auto"
-                  ref={listboxRef}
-                  role="listbox"
-                  aria-labelledby={id}
-                  tabIndex={-1}
-                >
-                  {filteredStations.length > 0 ? (
-                    filteredStations.map((station, index) => {
-                      if (selectedStation && station.code === selectedStation.code) {
-                        return null;
-                      }
+                {availableNextChars.length > 0 && (
+                  <div className="border-t border-gray-700">
+                    <AvailableNextChars availableNextChars={availableNextChars} />
+                  </div>
+                )}
 
-                      const isHighlighted = index === highlightedIndex;
-                      const isRecent = isStationRecent(station);
+                {selectedStation && (
+                  <SelectedStationItem
+                    selectedStation={selectedStation.name || ""}
+                    onClearSelection={() => handleStationSelect(null)}
+                  />
+                )}
 
-                      return (
-                        <div
-                          key={station.code}
-                          data-index={index}
-                          role="option"
-                          aria-selected={isHighlighted}
-                          onClick={() => handleStationSelect(station)}
-                          className={`cursor-pointer px-3 py-2.5 ${
-                            isHighlighted ? "bg-gray-700" : "hover:bg-gray-700"
-                          } ${
-                            index < filteredStations.length - 1 ? "border-b border-gray-700/50" : ""
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex flex-col">
-                              <span className={`${isHighlighted ? "text-white" : "text-gray-200"}`}>
-                                {searchTerm
-                                  ? highlightStationText(station.name, searchTerm)
-                                  : station.name}
-                              </span>
-                              <span
-                                className={`text-sm ${isHighlighted ? "text-gray-300" : "text-gray-400"}`}
-                              >
-                                {station.code}
-                              </span>
-                            </div>
-                            {isRecent && <span className="ml-2 text-xs text-gray-400">Recent</span>}
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className="px-3 py-4 text-center text-gray-400">
-                      No matching stations found
-                    </div>
-                  )}
-                </div>
-              )}
+                <StationList
+                  filteredStations={filteredStations}
+                  selectedStation={selectedStation}
+                  searchTerm={searchTerm}
+                  highlightedIndex={highlightedIndex}
+                  handleStationSelect={handleStationSelect}
+                  isStationRecent={isStationRecent}
+                  isLoading={isLoading}
+                  isError={isError}
+                  hasRecentStations={hasRecentStations}
+                  refetch={refetch}
+                  listboxRef={listboxRef}
+                />
+              </div>
             </div>
-          </Popover.Content>
-        </Popover.Portal>
-      </Popover.Root>
+          )}
+        </div>
+      )}
     </div>
   );
 };

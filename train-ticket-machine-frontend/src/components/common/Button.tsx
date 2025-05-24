@@ -5,7 +5,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   ref?: React.Ref<HTMLButtonElement>;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export const Button = ({
   children,
   className,
   variant = "primary",
@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled = false,
   ref,
   ...props
-}) => {
+}: ButtonProps) => {
   const baseClasses =
     "inline-flex items-center justify-center font-medium rounded-lg shadow-sm transition-colors duration-150 select-none" +
     " focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800" +
