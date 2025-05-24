@@ -1,18 +1,12 @@
-export interface FormProps extends React.FormHTMLAttributes<HTMLFormElement> {
+import * as RadixForm from "@radix-ui/react-form";
+
+export interface FormProps extends RadixForm.FormProps {
   title?: string;
-  subtitle?: string;
   maxWidth?: "sm" | "md" | "lg" | "xl" | "full";
+  children: React.ReactNode;
 }
 
-const Form: React.FC<FormProps> = ({
-  children,
-  className,
-  title,
-  subtitle,
-  maxWidth = "md",
-  ...props
-}) => {
-  // Map maxWidth to TailwindCSS classes
+const Form: React.FC<FormProps> = ({ children, className, title, maxWidth = "lg", ...props }) => {
   const maxWidthClasses = {
     sm: "max-w-sm",
     md: "max-w-md",
@@ -21,23 +15,27 @@ const Form: React.FC<FormProps> = ({
     full: "max-w-full",
   };
 
+  const outerDivBaseClasses = `w-full ${maxWidthClasses[maxWidth]} mx-auto bg-gray-800 shadow-lg rounded-xl p-6 md:p-8`;
+
   return (
-    <div
-      className={`w-full ${maxWidthClasses[maxWidth]} mx-auto bg-gray-800 shadow-lg rounded-xl p-6 md:p-8`}
-    >
+    <div className={outerDivBaseClasses}>
       {title && (
-        <div className='mb-8'>
-          <h2 className='text-2xl font-bold text-white text-center'>{title}</h2>
-          {subtitle && (
-            <p className='mt-2 text-gray-300 text-center'>{subtitle}</p>
-          )}
+        <div className="mb-6 text-center">
+          <h2 className="text-2xl font-bold text-white">{title}</h2>
         </div>
       )}
-      <form className={`space-y-6 ${className || ""}`} {...props}>
+      <RadixForm.Root className={`space-y-6 ${className || ""}`} {...props}>
         {children}
-      </form>
+      </RadixForm.Root>
     </div>
   );
 };
 
-export default Form;
+const FormField = RadixForm.Field;
+const FormLabel = RadixForm.Label;
+const FormControl = RadixForm.Control;
+const FormMessage = RadixForm.Message;
+const FormValidityState = RadixForm.ValidityState;
+const FormSubmit = RadixForm.Submit;
+
+export { Form, FormControl, FormField, FormLabel, FormMessage, FormSubmit, FormValidityState };

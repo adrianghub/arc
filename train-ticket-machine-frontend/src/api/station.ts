@@ -12,4 +12,5 @@ export interface StationAPIResponse {
 export interface StationUIModel {
   name: string;
   code: string;
+  isRecent?: boolean;
 }
