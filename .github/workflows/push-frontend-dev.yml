@@ -21,7 +21,20 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Build Docker image
-        run: docker build -f train-ticket-machine-frontend/Dockerfile.build -t train-ticket-machine-frontend:pr train-ticket-machine-frontend
+        run: >
+          docker build
+          -f train-ticket-machine-frontend/Dockerfile.build
+          -t train-ticket-machine-frontend:pr
+          --build-arg VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
+          --build-arg SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+          --build-arg VITE_APP_ENV="development"
+          --build-arg VITE_COMMIT_SHA=${{ github.sha }}
+          train-ticket-machine-frontend
+        env:
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          VITE_APP_ENV: "development"
+          VITE_COMMIT_SHA: ${{ github.sha }}
 
       - name: Run tests in Docker container
         run: docker run --rm train-ticket-machine-frontend:pr npm run test
