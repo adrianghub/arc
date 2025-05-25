@@ -154,3 +154,35 @@ export default tseslint.config({
   },
 })
 ```
+
+## Error Monitoring with Sentry
+
+This project uses [Sentry](https://sentry.io/) for error tracking and performance monitoring.
+
+### Setup
+
+1. Create a `.env.local` file in the root directory with your Sentry DSN:
+   ```
+   VITE_SENTRY_DSN="your-sentry-dsn"
+   ```
+
+2. For source map uploading during builds, create a `.env.sentry-build-plugin` file:
+   ```
+   SENTRY_AUTH_TOKEN=your-sentry-auth-token
+   ```
+
+3. Update the Sentry organization and project name in `vite.config.ts` if needed:
+   ```javascript
+   sentryVitePlugin({
+     org: "yourorgname", // Replace with your Sentry org name
+     project: "train-ticket-machine-frontend", // Your Sentry project name
+     // ...
+   })
+   ```
+
+### Testing
+
+In development mode, there are two test buttons available at the bottom of the application:
+- "Test Sentry (Caught Error)" - Triggers a caught exception
+- "Test Sentry (Uncaught Error)" - Triggers an uncaught exception that will be captured by the error boundary
+```

@@ -20,8 +20,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Build Docker image
-        run: docker build -f train-ticket-machine-frontend/Dockerfile.build -t train-ticket-machine-frontend:pr train-ticket-machine-frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./train-ticket-machine-frontend
+          file: ./train-ticket-machine-frontend/Dockerfile.build
+          tags: train-ticket-machine-frontend:pr
+          load: true
+          build-args: |
+            VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
+            VITE_APP_ENV=development
+            VITE_COMMIT_SHA=${{ github.sha }}
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Run tests in Docker container
         run: docker run --rm train-ticket-machine-frontend:pr npm run test

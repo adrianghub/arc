@@ -2,9 +2,27 @@ FROM node:22.15.1-alpine3.21
 
 WORKDIR /app
 
+ARG VITE_SENTRY_DSN
+ARG VITE_APP_ENV
+ARG VITE_COMMIT_SHA
+ARG SENTRY_AUTH_TOKEN
+
+ENV VITE_SENTRY_DSN=$VITE_SENTRY_DSN
+ENV VITE_APP_ENV=$VITE_APP_ENV
+ENV VITE_COMMIT_SHA=$VITE_COMMIT_SHA
+
 COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+# Create Sentry CLI config file if token is provided
+RUN if [ -n "$SENTRY_AUTH_TOKEN" ]; then \
+    echo "[auth]" > .sentryclirc && \
+    echo "token=$SENTRY_AUTH_TOKEN" >> .sentryclirc; \
+    fi
+
 RUN npm run build
 RUN npm run build-storybook
+
+RUN rm -f .sentryclirc

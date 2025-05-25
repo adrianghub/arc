@@ -1,3 +1,4 @@
+import * as Sentry from "@sentry/react";
 import { Component, type ErrorInfo, type ReactNode } from "react";
 import { ErrorDisplay } from "./common/ErrorDisplay";
 
@@ -52,6 +53,13 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    Sentry.captureException(error, {
+      contexts: {
+        react: {
+          componentStack: errorInfo.componentStack,
+        },
+      },
+    });
     console.error("ErrorBoundary caught an error:", error, errorInfo);
   }
 
@@ -67,3 +75,17 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     return this.props.children;
   }
 }
+
+const SentryFallback = ({ error, resetError }: { error: unknown; resetError?: () => void }) => {
+  return (
+    <ErrorDisplay
+      error={error instanceof Error ? error : new Error(String(error))}
+      onRetry={() => resetError?.()}
+    />
+  );
+};
+
+export const SentryErrorBoundary = Sentry.withErrorBoundary(ErrorBoundary, {
+  fallback: SentryFallback,
+  showDialog: true,
+});
