@@ -1,5 +1,5 @@
 import type { Meta, StoryFn } from "@storybook/react";
-import React from "react";
+import { useEffect, useState } from "react";
 import { useGhostText } from "../../hooks/useGhostText";
 import { StationSearchInput } from "./StationSearchInput";
 
@@ -16,7 +16,7 @@ const meta = {
 export default meta;
 
 const DefaultTemplate: StoryFn<typeof StationSearchInput> = () => {
-  const [searchTerm, setSearchTerm] = React.useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const {
     ghostTextRef,
@@ -47,7 +47,7 @@ export const Default = {
 };
 
 const WithGhostTextTemplate: StoryFn<typeof StationSearchInput> = () => {
-  const [searchTerm, setSearchTerm] = React.useState("lond");
+  const [searchTerm, setSearchTerm] = useState("lond");
 
   const {
     ghostTextRef,
@@ -78,8 +78,8 @@ export const WithGhostText = {
 };
 
 const InteractiveDemoTemplate: StoryFn<typeof StationSearchInput> = () => {
-  const [searchTerm, setSearchTerm] = React.useState("");
-  const [nextCharSuggestion, setNextCharSuggestion] = React.useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [nextCharSuggestion, setNextCharSuggestion] = useState<string | null>(null);
 
   const {
     ghostTextRef,
@@ -92,7 +92,7 @@ const InteractiveDemoTemplate: StoryFn<typeof StationSearchInput> = () => {
   });
 
   // This simulates finding a suggestion based on input
-  React.useEffect(() => {
+  useEffect(() => {
     if (searchTerm === "l") {
       setNextCharSuggestion("ondon");
     } else if (searchTerm === "lo") {
