@@ -1,5 +1,5 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { StationUIModel } from "../../api/station";
 import { useStationsContext } from "../../context/useStationsContext";
 import { useGhostText } from "../../hooks/useGhostText";
@@ -51,7 +51,7 @@ export const StationCombobox = ({
 
   const selectedStation = isControlled ? externalSelectedStation : contextSelectedStation;
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     ghostTextRef,
@@ -64,7 +64,9 @@ export const StationCombobox = ({
   });
 
   const { highlightedIndex, handleKeyDown: handleNavKeyDown } = useKeyboardNavigation({
-    displayStations: filteredStations,
+    displayStations: selectedStation
+      ? filteredStations.filter((station) => station.code !== selectedStation.code)
+      : filteredStations,
     onStationSelect: (station) => handleStationSelect(station),
     onClose: () => setIsOpen(false),
     nextCharSuggestion,
@@ -73,26 +75,6 @@ export const StationCombobox = ({
       setSearchTerm(term);
     },
   });
-
-  useEffect(() => {
-    if (highlightedIndex >= 0 && listboxRef.current) {
-      const highlightedElement = listboxRef.current.querySelector(
-        `[data-index="${highlightedIndex}"]`,
-      ) as HTMLElement;
-
-      if (highlightedElement) {
-        const container = listboxRef.current;
-        const containerRect = container.getBoundingClientRect();
-        const highlightedRect = highlightedElement.getBoundingClientRect();
-
-        if (highlightedRect.bottom > containerRect.bottom) {
-          container.scrollTop += highlightedRect.bottom - containerRect.bottom;
-        } else if (highlightedRect.top < containerRect.top) {
-          container.scrollTop -= containerRect.top - highlightedRect.top;
-        }
-      }
-    }
-  }, [highlightedIndex]);
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {

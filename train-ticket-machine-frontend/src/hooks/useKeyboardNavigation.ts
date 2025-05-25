@@ -26,14 +26,25 @@ export const useKeyboardNavigation = ({
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setHighlightedIndex((prevIndex) =>
-          prevIndex < displayStations.length - 1 ? prevIndex + 1 : prevIndex,
-        );
+        setHighlightedIndex((prevIndex) => {
+          const newIndex = prevIndex < displayStations.length - 1 ? prevIndex + 1 : prevIndex;
+          return newIndex;
+        });
         break;
 
       case "ArrowUp":
         e.preventDefault();
-        setHighlightedIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : 0));
+        setHighlightedIndex((prevIndex) => {
+          const newIndex = prevIndex > 0 ? prevIndex - 1 : 0;
+          return newIndex;
+        });
+        break;
+
+      case "End":
+        e.preventDefault();
+        if (displayStations.length > 0) {
+          setHighlightedIndex(displayStations.length - 1);
+        }
         break;
 
       case "Enter":
