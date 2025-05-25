@@ -133,6 +133,19 @@ export const StationCombobox = ({
     }
   };
 
+  const handleCharSelect = (char: string) => {
+    const newValue = searchTerm + char;
+    setSearchTerm(newValue);
+
+    requestAnimationFrame(() => {
+      if (searchInputRef.current) {
+        searchInputRef.current.focus();
+        searchInputRef.current.setSelectionRange(newValue.length, newValue.length);
+        updateGhostTextPosition();
+      }
+    });
+  };
+
   const isStationRecent = (station: StationUIModel) => {
     return recentStations.some((s) => s.code === station.code);
   };
@@ -189,7 +202,10 @@ export const StationCombobox = ({
 
                 {availableNextChars.length > 0 && (
                   <div className="border-t border-gray-700">
-                    <AvailableNextChars availableNextChars={availableNextChars} />
+                    <AvailableNextChars
+                      availableNextChars={availableNextChars}
+                      onCharSelect={handleCharSelect}
+                    />
                   </div>
                 )}
 
