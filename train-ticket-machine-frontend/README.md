@@ -96,7 +96,7 @@ In production, Storybook is:
 - [x] Add a result list
 - [x] Handle errors and loading states
 - [x] Add error and user interaction logging
-- [] Add A/B testing
+- [x] Add A/B testing
 - [] Add search for arrival station
 - [] Display results of selected route (price, duration)
 
