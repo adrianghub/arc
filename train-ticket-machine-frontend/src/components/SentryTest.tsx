@@ -21,15 +21,17 @@ export function SentryTest() {
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <button
           onClick={testSentryError}
-          className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700"
+          className="flex flex-col rounded bg-blue-200 px-4 py-2 font-bold text-blue-600 hover:bg-blue-300"
         >
-          Test Sentry (Caught Error - See Console)
+          <span>Test Sentry</span>
+          <span>(Caught Error - Console Log)</span>
         </button>
         <button
           onClick={testSentryFatalError}
-          className="rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700"
+          className="flex flex-col rounded bg-red-200 px-4 py-2 font-bold text-red-600 hover:bg-red-300"
         >
-          Test Sentry (Uncaught Error + Dialog)
+          <span>Test Sentry</span>
+          <span>(Uncaught Error + Dialog)</span>
         </button>
       </div>
 
