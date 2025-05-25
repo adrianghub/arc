@@ -1,12 +1,12 @@
+import * as Sentry from "@sentry/react";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-// Import Sentry as early as possible
-import * as Sentry from "@sentry/react";
 import App from "./App.tsx";
 import { ReactQueryDevTools } from "./components/ReactQueryDevTools";
 import { StationsProvider } from "./context/StationsContext.tsx";
 import "./index.css";
 import { QueryProvider } from "./lib/QueryProvider";
+import { StatsigProvider } from "./lib/StatsigProvider";
 import "./sentry";
 
 const container = document.getElementById("root")!;
@@ -23,11 +23,13 @@ const root = createRoot(container, {
 
 root.render(
   <StrictMode>
-    <QueryProvider>
-      <StationsProvider>
-        <App />
-        <ReactQueryDevTools />
-      </StationsProvider>
-    </QueryProvider>
+    <StatsigProvider>
+      <QueryProvider>
+        <StationsProvider>
+          <App />
+          <ReactQueryDevTools />
+        </StationsProvider>
+      </QueryProvider>
+    </StatsigProvider>
   </StrictMode>,
 );

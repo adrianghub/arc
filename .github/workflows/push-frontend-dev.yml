@@ -35,6 +35,7 @@ jobs:
             VITE_APP_ENV=development
             VITE_COMMIT_SHA=${{ github.sha }}
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
+            VITE_STATSIG_CLIENT_KEY=${{ secrets.VITE_STATSIG_CLIENT_KEY }}
 
       - name: Run tests in Docker container
         run: docker run --rm train-ticket-machine-frontend:pr npm run test
