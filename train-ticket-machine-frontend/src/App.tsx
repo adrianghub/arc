@@ -6,11 +6,12 @@ import { StationSearchForm } from "./components/StationSearch/StationSearchForm"
 import { useStationsContext } from "./context/useStationsContext";
 
 function App() {
-  const { selectedStation, clearSelectedStation } = useStationsContext();
+  const { selectedStation, submitStation, clearSelectedStation } = useStationsContext();
   const [submittedStation, setSubmittedStation] = useState<StationUIModel | null>(null);
 
   const handleSubmit = () => {
     if (selectedStation) {
+      submitStation(selectedStation);
       setSubmittedStation(selectedStation);
       clearSelectedStation();
     }

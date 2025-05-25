@@ -9,6 +9,7 @@ import {
 export type StationsAction =
   | { type: "SET_SEARCH_TERM"; payload: string }
   | { type: "SELECT_STATION"; payload: StationUIModel }
+  | { type: "SUBMIT_STATION"; payload: StationUIModel }
   | { type: "CLEAR_SELECTED_STATION" }
   | { type: "SET_STATIONS"; payload: StationUIModel[] }
   | { type: "SET_RECENT_STATIONS"; payload: StationUIModel[] }
@@ -70,6 +71,16 @@ export const stationsReducer = (state: StationsState, action: StationsAction): S
     }
 
     case "SELECT_STATION": {
+      return {
+        ...state,
+        selectedStation: action.payload,
+        searchTerm: "",
+        nextCharSuggestion: "",
+        availableNextChars: [],
+      };
+    }
+
+    case "SUBMIT_STATION": {
       const station = action.payload;
       const updatedRecent = addRecentSearch(station);
 
@@ -83,9 +94,7 @@ export const stationsReducer = (state: StationsState, action: StationsAction): S
 
       return {
         ...state,
-        selectedStation: station,
         recentStations: updatedRecent,
-        searchTerm: "",
         hasRecentStations: updatedRecent.length > 0,
         filteredStations,
         nextCharSuggestion: "",
