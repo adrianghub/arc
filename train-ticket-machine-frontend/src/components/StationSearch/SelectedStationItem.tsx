@@ -23,7 +23,7 @@ export const SelectedStationItem = ({
 
   return (
     <div
-      className="flex cursor-pointer items-center justify-between border-b border-gray-600 px-3 py-2.5 hover:bg-gray-700"
+      className="flex cursor-pointer items-center justify-between px-3 py-2.5 hover:bg-gray-700"
       onClick={onClearSelection}
       tabIndex={0}
       role="button"

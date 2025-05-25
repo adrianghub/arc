@@ -64,7 +64,9 @@ export const StationCombobox = ({
   });
 
   const { highlightedIndex, handleKeyDown: handleNavKeyDown } = useKeyboardNavigation({
-    displayStations: filteredStations,
+    displayStations: selectedStation
+      ? filteredStations.filter((station) => station.code !== selectedStation.code)
+      : filteredStations,
     onStationSelect: (station) => handleStationSelect(station),
     onClose: () => setIsOpen(false),
     nextCharSuggestion,
@@ -73,26 +75,6 @@ export const StationCombobox = ({
       setSearchTerm(term);
     },
   });
-
-  useEffect(() => {
-    if (highlightedIndex >= 0 && listboxRef.current) {
-      const highlightedElement = listboxRef.current.querySelector(
-        `[data-index="${highlightedIndex}"]`,
-      ) as HTMLElement;
-
-      if (highlightedElement) {
-        const container = listboxRef.current;
-        const containerRect = container.getBoundingClientRect();
-        const highlightedRect = highlightedElement.getBoundingClientRect();
-
-        if (highlightedRect.bottom > containerRect.bottom) {
-          container.scrollTop += highlightedRect.bottom - containerRect.bottom;
-        } else if (highlightedRect.top < containerRect.top) {
-          container.scrollTop -= containerRect.top - highlightedRect.top;
-        }
-      }
-    }
-  }, [highlightedIndex]);
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {

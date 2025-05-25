@@ -112,11 +112,21 @@ export const StationList = ({
 
   const listRef = useRef<FixedSizeList>(null);
 
+  const displayedStations = selectedStation
+    ? filteredStations.filter((station) => station.code !== selectedStation.code)
+    : filteredStations;
+
   useEffect(() => {
     if (listRef.current) {
       listRef.current.scrollTo(0);
     }
-  }, [searchTerm, filteredStations.length]);
+  }, [searchTerm, displayedStations.length]);
+
+  useEffect(() => {
+    if (listRef.current && highlightedIndex >= 0 && displayedStations.length > 0) {
+      listRef.current.scrollToItem(highlightedIndex, "smart");
+    }
+  }, [highlightedIndex, displayedStations.length]);
 
   if (isLoading && !hasRecentStations) {
     return (
@@ -144,7 +154,7 @@ export const StationList = ({
     );
   }
 
-  if ((isLoading || isError) && hasRecentStations && filteredStations.length === 0) {
+  if ((isLoading || isError) && hasRecentStations && displayedStations.length === 0) {
     return (
       <div
         ref={listboxRef}
@@ -159,7 +169,7 @@ export const StationList = ({
     );
   }
 
-  if (filteredStations.length === 0) {
+  if (displayedStations.length === 0) {
     return (
       <div className="max-h-[300px] overflow-y-auto">
         <EmptyMessage searchTerm={searchTerm} />
@@ -167,24 +177,23 @@ export const StationList = ({
     );
   }
 
-  // Row renderer for virtualized list with proper styling
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const station = filteredStations[index];
-
-    if (selectedStation && station.code === selectedStation.code) {
-      return null;
-    }
-
-    const borderClass = index < filteredStations.length - 1 ? "border-b border-gray-700/50" : "";
+    const station = displayedStations[index];
+    const borderClass = index < displayedStations.length - 1 ? "border-b border-gray-700/50" : "";
+    const isHighlighted = index === highlightedIndex;
 
     return (
-      <div style={style} className={borderClass}>
+      <div
+        style={style}
+        className={borderClass}
+        data-scroll-triggered={isHighlighted ? "true" : undefined}
+      >
         <StationItem
           key={station.code}
           station={station}
-          isSelected={selectedStation?.code === station.code}
+          isSelected={false}
           searchTerm={searchTerm}
-          isHighlighted={index === highlightedIndex}
+          isHighlighted={isHighlighted}
           onClick={() => handleStationSelect(station)}
           isRecent={isStationRecent(station)}
           data-index={index}
@@ -208,9 +217,9 @@ export const StationList = ({
       <div className="w-full">
         <FixedSizeList
           ref={listRef}
-          height={Math.min(filteredStations.length * ITEM_HEIGHT, MAX_HEIGHT)}
+          height={Math.min(displayedStations.length * ITEM_HEIGHT, MAX_HEIGHT)}
           width="100%"
-          itemCount={filteredStations.length}
+          itemCount={displayedStations.length}
           itemSize={ITEM_HEIGHT}
           overscanCount={5}
           className="scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-gray-600"
