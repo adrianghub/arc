@@ -91,11 +91,11 @@ In production, Storybook is:
 - [x] Dockerize the app
 - [x] Setup CI/CD pipeline
 - [x] Configure Storybook on path /storybook
-- [] Add search for departure station
-- [] Add suggestion list
-- [] Add a result list
-- [] Handle errors and loading states
-- [] Add error and user interaction logging
+- [x] Add search for departure station
+- [x] Add suggestion list
+- [x] Add a result list
+- [x] Handle errors and loading states
+- [x] Add error and user interaction logging
 - [] Add A/B testing
 - [] Add search for arrival station
 - [] Display results of selected route (price, duration)
