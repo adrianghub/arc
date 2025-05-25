@@ -1,5 +1,5 @@
 import { Search } from "lucide-react";
-import React, { useCallback } from "react";
+import { useCallback } from "react";
 import { useStationsContext } from "../../context/useStationsContext";
 import { Button } from "../common/Button";
 import { ErrorDisplay } from "../common/ErrorDisplay";

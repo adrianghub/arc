@@ -1,5 +1,4 @@
 import { Check, X } from "lucide-react";
-import React from "react";
 
 interface SelectedStationItemProps {
   selectedStation: string;

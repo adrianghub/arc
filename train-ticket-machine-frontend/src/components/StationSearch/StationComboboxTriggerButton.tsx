@@ -1,5 +1,4 @@
 import { ChevronDown } from "lucide-react";
-import React from "react";
 import type { StationUIModel } from "../../api/station";
 
 interface StationComboboxTriggerButtonProps {

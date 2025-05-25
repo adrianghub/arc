@@ -1,5 +1,5 @@
 import { AlertCircle, RefreshCw } from "lucide-react";
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { StationUIModel } from "../../api/station";
 import { useStationsContext } from "../../context/useStationsContext";
 import { useGhostText } from "../../hooks/useGhostText";
@@ -51,7 +51,7 @@ export const StationCombobox = ({
 
   const selectedStation = isControlled ? externalSelectedStation : contextSelectedStation;
 
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const {
     ghostTextRef,
