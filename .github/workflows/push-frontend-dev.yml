@@ -34,7 +34,6 @@ jobs:
             VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
             VITE_APP_ENV=development
             VITE_COMMIT_SHA=${{ github.sha }}
-          secret-envs: |
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Run tests in Docker container

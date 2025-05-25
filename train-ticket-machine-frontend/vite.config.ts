@@ -26,6 +26,8 @@ const storybookRedirectPlugin = () => ({
   },
 });
 
+const hasSentryToken = Boolean(process.env.SENTRY_AUTH_TOKEN);
+
 // https://vite.dev/config/
 export default defineConfig({
   build: {
@@ -35,18 +37,24 @@ export default defineConfig({
     react(),
     tailwindcss(),
     storybookRedirectPlugin(),
-    sentryVitePlugin({
-      org: "the-startup-y3",
-      project: "train-ticket-machine-frontend",
-      authToken: process.env.SENTRY_AUTH_TOKEN,
-      sourcemaps: {
-        filesToDeleteAfterUpload: ["./dist/**/*.js.map"],
-      },
-      release: {
-        name: process.env.GITHUB_SHA
-          ? `train-ticket-machine-frontend@${process.env.GITHUB_SHA.substring(0, 7)}`
-          : undefined,
-      },
-    }),
+    ...(hasSentryToken
+      ? [
+          sentryVitePlugin({
+            org: "the-startup-y3",
+            project: "train-ticket-machine-frontend",
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            debug: true,
+            silent: false,
+            sourcemaps: {
+              filesToDeleteAfterUpload: ["./dist/**/*.js.map"],
+            },
+            release: {
+              name: process.env.GITHUB_SHA
+                ? `train-ticket-machine-frontend@${process.env.GITHUB_SHA.substring(0, 7)}`
+                : undefined,
+            },
+          }),
+        ]
+      : []),
   ],
 });
