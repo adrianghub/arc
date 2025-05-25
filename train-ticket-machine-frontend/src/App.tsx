@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { StationUIModel } from "./api/station";
-import { ErrorBoundary } from "./components/ErrorBoundary";
+import { SentryErrorBoundary } from "./components/ErrorBoundary";
+import { SentryTest } from "./components/SentryTest";
 import { ChosenStationDisplay } from "./components/StationSearch/ChosenStationDisplay";
 import { StationSearchForm } from "./components/StationSearch/StationSearchForm";
 import { useStationsContext } from "./context/useStationsContext";
@@ -23,10 +24,11 @@ function App() {
         <h1 className="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">Train Ticket Machine</h1>
       </header>
       <main className="flex w-full touch-manipulation flex-col items-center justify-center">
-        <ErrorBoundary>
+        <SentryErrorBoundary>
           <StationSearchForm onSubmit={handleSubmit} />
           <ChosenStationDisplay station={submittedStation} />
-        </ErrorBoundary>
+          {import.meta.env.DEV && <SentryTest />}
+        </SentryErrorBoundary>
       </main>
     </div>
   );
