@@ -2,22 +2,6 @@
 
 Read this pdf for additional reference [Train Ticket Machine](./docs/train-ticket-machine-frontend-v2-2-.pdf)
 
-## TODO
-
-- [x] Create a project from the template
-- [] Add necessary configuration for linting, formatting, testing, etc.
-- [] Add tool for components documentation
-- [] Configure unit tests
-- [] Setup CI/CD pipeline
-- [] Add search for departure station
-- [] Add suggestion list
-- [] Add a result list
-- [] Handle errors and loading states
-- [] Add error and user interaction logging
-- [] Add A/B testing
-- [] Dockerize the app
-- [] Add search for arrival station
-- [] Display results of selected route (price, duration)
 
 ## Assumptions
 
@@ -53,8 +37,70 @@ Operational requirements:
 
 [Flowchart diagram](./docs/flowchart-diagram.md)
 
+## CI/CD
 
-## Starter template overview
+The application is deployed as a static website. The CI/CD pipeline handles the build and deployment process:
+
+**1. Pull Request Workflow (CI):** Triggered on every pull request to the `dev` branch.
+    *   GitHub Actions checks out the code.
+    *   A Docker image is built.
+    *   Linters and formatters are run within the Docker container.
+    *   Unit and integration tests (including coverage) are executed within the Docker container.
+    *   This ensures code quality and stability before merging into `dev`.
+
+**2. Push to `dev` Workflow (CI/CD):** Triggered on every push to the `dev` branch.
+    *   **Continuous Integration:**
+        *   GitHub Actions checks out the code.
+        *   A Docker image is built.
+        *   Unit and integration tests (including coverage) are executed.
+    *   **Continuous Deployment:**
+        *   The production build of the application (`dist` folder) is extracted from the Docker container.
+        *   The built static assets (HTML, CSS, JavaScript, images) are uploaded to an **AWS S3 bucket** configured for static website hosting.
+        *   An **AWS CloudFront distribution**, fronting the S3 bucket, serves the content. Cache invalidation is handled to ensure users receive the latest version.
+
+## Local Development
+
+During development, you have two options:
+
+1. **Run both the app and Storybook together:**
+   ```bash
+   npm run dev:all
+   ```
+   - Main app will be available at http://localhost:5173
+   - Going to http://localhost:5173/storybook will automatically redirect you to Storybook at http://localhost:6006
+
+2. **Run just Storybook:**
+   ```bash
+   npm run storybook
+   ```
+   This will start Storybook directly on port 6006, accessible at http://localhost:6006
+
+### Deployed version
+
+In production, Storybook is:
+- Built alongside the main application in a separate `dist/storybook` directory
+- Deployed to the `/storybook` path on the same domain
+- Available at https://d3i19dhhon0a88.cloudfront.net/storybook
+
+## TODO
+
+- [x] Create a project from the template
+- [x] Add necessary configuration for linting, formatting, testing, etc.
+- [x] Add tool for components documentation
+- [x] Configure unit tests
+- [x] Dockerize the app
+- [x] Setup CI/CD pipeline
+- [x] Configure Storybook on path /storybook
+- [x] Add search for departure station
+- [x] Add suggestion list
+- [x] Add a result list
+- [x] Handle errors and loading states
+- [x] Add error and user interaction logging
+- [x] Add A/B testing
+- [] Add search for arrival station
+- [] Display results of selected route (price, duration)
+
+## Note on the starter template
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
@@ -107,4 +153,36 @@ export default tseslint.config({
     ...reactDom.configs.recommended.rules,
   },
 })
+```
+
+## Error Monitoring with Sentry
+
+This project uses [Sentry](https://sentry.io/) for error tracking and performance monitoring.
+
+### Setup
+
+1. Create a `.env.local` file in the root directory with your Sentry DSN:
+   ```
+   VITE_SENTRY_DSN="your-sentry-dsn"
+   ```
+
+2. For source map uploading during builds, create a `.env.sentry-build-plugin` file:
+   ```
+   SENTRY_AUTH_TOKEN=your-sentry-auth-token
+   ```
+
+3. Update the Sentry organization and project name in `vite.config.ts` if needed:
+   ```javascript
+   sentryVitePlugin({
+     org: "yourorgname", // Replace with your Sentry org name
+     project: "train-ticket-machine-frontend", // Your Sentry project name
+     // ...
+   })
+   ```
+
+### Testing
+
+In development mode, there are two test buttons available at the bottom of the application:
+- "Test Sentry (Caught Error)" - Triggers a caught exception
+- "Test Sentry (Uncaught Error)" - Triggers an uncaught exception that will be captured by the error boundary
 ```
