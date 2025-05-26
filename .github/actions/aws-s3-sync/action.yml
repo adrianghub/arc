@@ -7,8 +7,7 @@ inputs:
     required: true
   bundle-dir:
     description: 'Bundle directory'
-    required: false
-    default: 'dist'
+    required: true
   cloudfront-distribution-id:
     description: 'CloudFront distribution ID'
     required: true
@@ -25,7 +24,7 @@ runs:
         aws-region: ${{ inputs.aws-region }}
 
     - name: Sync S3 bucket
-      run: aws s3 sync ${{ inputs.bundle-dir }} s3://${{ inputs.bucket-name }}
+      run: aws s3 sync ${{ inputs.bundle-dir }} s3://${{ inputs.bucket-name }} --delete
       shell: bash
 
     - name: Invalidate CloudFront Cache
