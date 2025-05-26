@@ -47,7 +47,7 @@ export const AvailableNextChars = ({
             onClick={() => handleCharClick(char)}
             role={isClickable ? "button" : "presentation"}
           >
-            {char}
+            {char === " " ? "<space>" : char}
           </span>
         ))}
       </div>
