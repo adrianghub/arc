@@ -2,32 +2,19 @@ import type { StationUIModel } from "../api/station";
 
 /**
  * Filters and sorts stations based on a search term.
- * Stations starting with the search term appear first (in alphabetical order),
- * followed by stations containing the search term elsewhere (also in alphabetical order).
+ * Only returns stations that start with the search term (in alphabetical order).
  */
 export function filterStations(stations: StationUIModel[], searchTerm: string): StationUIModel[] {
   if (searchTerm.trim() === "") return stations;
   const lowerTerm = searchTerm.toLowerCase();
 
-  const startsWithMatches = stations
+  return stations
     .filter(
       (station) =>
         station.name.toLowerCase().startsWith(lowerTerm) ||
         station.code.toLowerCase().startsWith(lowerTerm),
     )
     .sort((a, b) => a.name.localeCompare(b.name));
-
-  const containsMatches = stations
-    .filter(
-      (station) =>
-        (station.name.toLowerCase().includes(lowerTerm) ||
-          station.code.toLowerCase().includes(lowerTerm)) &&
-        !station.name.toLowerCase().startsWith(lowerTerm) &&
-        !station.code.toLowerCase().startsWith(lowerTerm),
-    )
-    .sort((a, b) => a.name.localeCompare(b.name));
-
-  return [...startsWithMatches, ...containsMatches];
 }
 
 /**
@@ -90,10 +77,11 @@ export function getAvailableNextChars(
       station.code.toLowerCase().trim() === normalizedSearchTerm,
   );
 
-  if (hasExactMatch) {
+  if (hasExactMatch && filteredStations.length === 1) {
     return [];
   }
 
+  // Only look at stations that start with the search term
   filteredStations.forEach((station) => {
     const name = station.name.toLowerCase();
 
@@ -101,17 +89,9 @@ export function getAvailableNextChars(
       nextCharsSet.add(name[normalizedSearchTerm.length]);
     }
 
-    const searchableText = `${station.name} ${station.code}`.toLowerCase();
-    let index = searchableText.indexOf(normalizedSearchTerm);
-    while (index !== -1) {
-      if (index + normalizedSearchTerm.length < searchableText.length) {
-        const nextChar = searchableText[index + normalizedSearchTerm.length];
-        // Only add alphanumeric characters and spaces
-        if (/^[a-zA-Z0-9 ]$/.test(nextChar)) {
-          nextCharsSet.add(nextChar);
-        }
-      }
-      index = searchableText.indexOf(normalizedSearchTerm, index + 1);
+    const code = station.code.toLowerCase();
+    if (code.startsWith(normalizedSearchTerm) && normalizedSearchTerm.length < code.length) {
+      nextCharsSet.add(code[normalizedSearchTerm.length]);
     }
   });
 

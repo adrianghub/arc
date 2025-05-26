@@ -1,4 +1,4 @@
-name: PR Frontend Dev - Docker Build & Test
+name: Push Frontend Dev - Docker Build & Test & Deploy
 
 on:
   push:
@@ -51,8 +51,14 @@ jobs:
 
       - name: Remove extraction container
         run: docker rm extract
-
-      - name: Sync with S3
+  deploy:
+    depends-on:
+      - build_and_test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Deploy to S3
         uses: ./.github/actions/aws-s3-sync
         with:
           bucket-name: ${{ secrets.S3_BUCKET_NAME }}

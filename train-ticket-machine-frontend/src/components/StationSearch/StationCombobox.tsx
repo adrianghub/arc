@@ -78,18 +78,15 @@ export const StationCombobox = ({
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
-      // Use a slight delay to ensure the DOM is ready
       searchInputRef.current?.focus();
     }
   }, [isOpen, searchInputRef]);
 
   const handleStationSelect = (station: StationUIModel | null) => {
-    if (!isControlled) {
-      if (station) {
-        contextSelectStation(station);
-      } else {
-        contextClearSelectedStation();
-      }
+    if (station) {
+      contextSelectStation(station);
+    } else {
+      contextClearSelectedStation();
     }
 
     onStationSelect(station);

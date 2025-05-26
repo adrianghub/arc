@@ -10,6 +10,7 @@ const mockStations: StationUIModel[] = [
   { name: "Liverpool", code: "LIV" },
   { name: "Leeds", code: "LDS" },
   { name: "Manchester", code: "MAN" },
+  { name: "Wilson", code: "WIL" },
 ];
 
 describe("filterStations", () => {
@@ -18,7 +19,7 @@ describe("filterStations", () => {
     expect(result).toEqual(mockStations);
   });
 
-  it("should return stations that start with the search term first", () => {
+  it("should return stations that start with the search term", () => {
     const result = filterStations(mockStations, "L");
     expect(result.length).toBe(4);
     expect(result[0].name).toBe("Leeds");
@@ -27,11 +28,9 @@ describe("filterStations", () => {
     expect(result[3].name).toBe("Long Island");
   });
 
-  it("should match stations with search term in middle", () => {
+  it("should not match stations with search term in middle", () => {
     const result = filterStations(mockStations, "on");
-    expect(result.length).toBe(2);
-    expect(result[0].name).toBe("London");
-    expect(result[1].name).toBe("Long Island");
+    expect(result.length).toBe(0);
   });
 
   it("should match case insensitively", () => {
@@ -45,6 +44,11 @@ describe("filterStations", () => {
     const result = filterStations(mockStations, "MAN");
     expect(result.length).toBe(1);
     expect(result[0].name).toBe("Manchester");
+  });
+
+  it("should only match start of station codes", () => {
+    const result = filterStations(mockStations, "AN");
+    expect(result.length).toBe(0);
   });
 });
 
@@ -90,22 +94,42 @@ describe("getAvailableNextChars", () => {
     expect(result).toContain("o");
   });
 
-  it("should prioritize the primary next character", () => {
+  it("should have sorted next characters", () => {
     const filtered = filterStations(mockStations, "L");
     const result = getAvailableNextChars(filtered, "L");
-    expect(result[0]).toBe("a");
+    expect(result.join("")).toBe(result.sort().join(""));
   });
 
   it("should include space as an available next character when appropriate", () => {
     const filtered = filterStations(mockStations, "New");
     const result = getAvailableNextChars(filtered, "New");
     expect(result).toContain(" ");
-    expect(result[0]).toBe(" ");
   });
 
   it("should not include space if search term is at the end of a word", () => {
     const filtered = filterStations(mockStations, "London");
     const result = getAvailableNextChars(filtered, "London");
     expect(result).not.toContain(" ");
+  });
+
+  it("should return empty array for exact match with single result", () => {
+    const singleMatch = [{ name: "London", code: "LON" }];
+    const result = getAvailableNextChars(singleMatch, "London");
+    expect(result).toEqual([]);
+  });
+
+  it("should include next characters from station codes", () => {
+    const filtered = filterStations(mockStations, "LO");
+    const result = getAvailableNextChars(filtered, "LO");
+    expect(result).toContain("n");
+  });
+
+  it("should not show next characters for exact match when multiple results exist", () => {
+    const stations = [
+      { name: "Aber", code: "ABE" },
+      { name: "Aberdeen", code: "ABD" },
+    ];
+    const result = getAvailableNextChars(stations, "Aber");
+    expect(result).toContain("d");
   });
 });

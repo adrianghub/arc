@@ -71,10 +71,19 @@ export const stationsReducer = (state: StationsState, action: StationsAction): S
     }
 
     case "SELECT_STATION": {
+      const allStations = calculateFilteredStations(
+        state.searchableStations,
+        state.recentStations,
+        "", // empty search term
+        state.isError,
+        state.stations,
+      );
+
       return {
         ...state,
         selectedStation: action.payload,
         searchTerm: "",
+        filteredStations: allStations,
         nextCharSuggestion: "",
         availableNextChars: [],
       };
@@ -102,11 +111,22 @@ export const stationsReducer = (state: StationsState, action: StationsAction): S
       };
     }
 
-    case "CLEAR_SELECTED_STATION":
+    case "CLEAR_SELECTED_STATION": {
+      const allStations = calculateFilteredStations(
+        state.searchableStations,
+        state.recentStations,
+        "", // empty search term
+        state.isError,
+        state.stations,
+      );
+
       return {
         ...state,
         selectedStation: null,
+        searchTerm: "",
+        filteredStations: allStations,
       };
+    }
 
     case "SET_STATIONS": {
       const stations = action.payload;
