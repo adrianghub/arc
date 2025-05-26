@@ -1,5 +1,10 @@
 name: Push Frontend Dev - Docker Build & Test & Deploy
 
+env:
+  ENVIRONMENT_NAME: Development
+  ENVIRONMENT_URL: https://d3i19dhhon0a88.cloudfront.net
+  DIST_DIR: dist
+
 on:
   push:
     branches:
@@ -10,7 +15,7 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
-    environment: Development
+    environment: ${{ env.ENVIRONMENT_NAME }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -42,26 +47,41 @@ jobs:
         run: docker create --name extract train-ticket-machine-frontend:pr
 
       - name: Copy build output
-        run: docker cp extract:/app/dist ./dist
+        run: docker cp extract:/app/${{ env.DIST_DIR }} ./${{ env.DIST_DIR }}
 
       - name: Remove extraction container
         run: docker rm extract
+
+      - name: Upload dist directory as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist-files
+          path: ${{ env.DIST_DIR }}
+
   deploy:
     needs:
       - build_and_test
     runs-on: ubuntu-latest
     environment:
-      name: Development
-      url: https://d3i19dhhon0a88.cloudfront.net
+      name: ${{ env.ENVIRONMENT_NAME }}
+      url: ${{ env.ENVIRONMENT_URL }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Download dist directory
+        uses: actions/download-artifact@v3
+        with:
+          name: dist-files
+          path: ${{ env.DIST_DIR }}
+
       - name: Deploy to S3
         uses: ./.github/actions/aws-s3-sync
         with:
           bucket-name: ${{ secrets.S3_BUCKET_NAME }}
           cloudfront-distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
+          bundle-dir: ${{ env.DIST_DIR }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
