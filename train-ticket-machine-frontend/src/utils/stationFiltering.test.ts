@@ -5,9 +5,11 @@ import { filterStations, getAvailableNextChars, getNextCharSuggestion } from "./
 const mockStations: StationUIModel[] = [
   { name: "London", code: "LON" },
   { name: "Birmingham", code: "BHM" },
-  { name: "Manchester", code: "MAN" },
+  { name: "New York", code: "NYK" },
+  { name: "Long Island", code: "LGI" },
   { name: "Liverpool", code: "LIV" },
   { name: "Leeds", code: "LDS" },
+  { name: "Manchester", code: "MAN" },
 ];
 
 describe("filterStations", () => {
@@ -18,22 +20,25 @@ describe("filterStations", () => {
 
   it("should return stations that start with the search term first", () => {
     const result = filterStations(mockStations, "L");
-    expect(result.length).toBe(3);
+    expect(result.length).toBe(4);
     expect(result[0].name).toBe("Leeds");
     expect(result[1].name).toBe("Liverpool");
     expect(result[2].name).toBe("London");
+    expect(result[3].name).toBe("Long Island");
   });
 
   it("should match stations with search term in middle", () => {
     const result = filterStations(mockStations, "on");
-    expect(result.length).toBe(1);
+    expect(result.length).toBe(2);
     expect(result[0].name).toBe("London");
+    expect(result[1].name).toBe("Long Island");
   });
 
   it("should match case insensitively", () => {
     const result = filterStations(mockStations, "lON");
-    expect(result.length).toBe(1);
+    expect(result.length).toBe(2);
     expect(result[0].name).toBe("London");
+    expect(result[1].name).toBe("Long Island");
   });
 
   it("should match by station code", () => {
@@ -88,6 +93,19 @@ describe("getAvailableNextChars", () => {
   it("should prioritize the primary next character", () => {
     const filtered = filterStations(mockStations, "L");
     const result = getAvailableNextChars(filtered, "L");
-    expect(result[0]).toBe("e");
+    expect(result[0]).toBe("a");
+  });
+
+  it("should include space as an available next character when appropriate", () => {
+    const filtered = filterStations(mockStations, "New");
+    const result = getAvailableNextChars(filtered, "New");
+    expect(result).toContain(" ");
+    expect(result[0]).toBe(" ");
+  });
+
+  it("should not include space if search term is at the end of a word", () => {
+    const filtered = filterStations(mockStations, "London");
+    const result = getAvailableNextChars(filtered, "London");
+    expect(result).not.toContain(" ");
   });
 });
