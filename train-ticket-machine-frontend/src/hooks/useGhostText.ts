@@ -92,9 +92,13 @@ export function useGhostText({ inputValue, suggestion }: UseGhostTextProps) {
   }, [inputValue, suggestion, updateGhostTextPosition]);
 
   useEffect(() => {
-    window.addEventListener("resize", updateGhostTextPosition);
+    const handleResize = () => {
+      requestAnimationFrame(updateGhostTextPosition);
+    };
+
+    window.addEventListener("resize", handleResize);
     return () => {
-      window.removeEventListener("resize", updateGhostTextPosition);
+      window.removeEventListener("resize", handleResize);
     };
   }, [updateGhostTextPosition]);
 
