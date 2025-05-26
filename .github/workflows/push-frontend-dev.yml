@@ -70,6 +70,9 @@ jobs:
       name: Development
       url: https://d3i19dhhon0a88.cloudfront.net
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Download dist directory
         uses: actions/download-artifact@v4
         with:
