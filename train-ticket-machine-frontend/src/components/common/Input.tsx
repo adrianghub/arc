@@ -14,7 +14,7 @@ export const Input = ({ label, id: providedId, className, error, ref, ...props }
   const baseClasses =
     "mt-1 block w-full bg-gray-700 border rounded-lg shadow-sm py-3.5 text-white placeholder-gray-400 " +
     "focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 " +
-    "text-base touch-manipulation px-4";
+    "text-base touch-manipulation px-4 pl-10";
 
   const borderClasses = error ? "border-red-500" : "border-gray-600";
 
