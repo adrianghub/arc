@@ -1,6 +1,7 @@
 import { Search, X } from "lucide-react";
 import type { RefObject } from "react";
 import React, { useEffect } from "react";
+import { Input } from "../common/Input";
 
 interface StationSearchInputProps {
   searchTerm: string;
@@ -38,14 +39,12 @@ export const StationSearchInput = ({
     <div className="relative border-b border-gray-700 p-2">
       <div className="relative">
         <Search className="absolute top-1/2 left-3 z-10 h-5 w-5 -translate-y-1/2 transform text-gray-300" />
-        <input
-          type="text"
+        <Input
           placeholder="Search by name or code..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyDown={handleKeyDown}
           ref={searchInputRef}
-          className="w-full rounded-md border border-gray-700 bg-gray-900 py-2 pr-10 pl-10 text-sm text-gray-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
           autoComplete="off"
           aria-autocomplete="list"
           aria-controls="station-listbox"
