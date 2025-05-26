@@ -1,9 +1,12 @@
 name: Push Frontend Dev - Docker Build & Test & Deploy
 
 env:
-  ENVIRONMENT_NAME: Development
-  ENVIRONMENT_URL: https://d3i19dhhon0a88.cloudfront.net
-  DIST_DIR: dist
+  DOCKER_IMAGE_NAME: train-ticket-machine-frontend
+  DOCKER_IMAGE_TAG_PR: train-ticket-machine-frontend:pr
+  DOCKER_CONTEXT_PATH: ./train-ticket-machine-frontend
+  DOCKERFILE_BUILD_PATH: ./train-ticket-machine-frontend/Dockerfile.build
+  ARTIFACT_NAME: dist-files
+  ARTIFACT_BUILD_PATH: ./dist
 
 on:
   push:
@@ -12,10 +15,11 @@ on:
     paths:
       - 'train-ticket-machine-frontend/**'
       - '.github/workflows/push-frontend-dev.yml'
+
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
-    environment: ${{ env.ENVIRONMENT_NAME }}
+    environment: Development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,9 +30,9 @@ jobs:
       - name: Build Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./train-ticket-machine-frontend
-          file: ./train-ticket-machine-frontend/Dockerfile.build
-          tags: train-ticket-machine-frontend:pr
+          context: ${{ env.DOCKER_CONTEXT_PATH }}
+          file: ${{ env.DOCKERFILE_BUILD_PATH }}
+          tags: ${{ env.DOCKER_IMAGE_TAG_PR }}
           load: true
           build-args: |
             VITE_SENTRY_DSN=${{ secrets.VITE_SENTRY_DSN }}
@@ -38,42 +42,42 @@ jobs:
             VITE_STATSIG_CLIENT_KEY=${{ secrets.VITE_STATSIG_CLIENT_KEY }}
 
       - name: Run tests in Docker container
-        run: docker run --rm train-ticket-machine-frontend:pr npm run test
+        run: docker run --rm ${{ env.DOCKER_IMAGE_TAG_PR }} npm run test
 
       - name: Run test coverage in Docker container
-        run: docker run --rm train-ticket-machine-frontend:pr npm run coverage
+        run: docker run --rm ${{ env.DOCKER_IMAGE_TAG_PR }} npm run coverage
 
       - name: Create container to extract build output
-        run: docker create --name extract train-ticket-machine-frontend:pr
+        run: docker create --name extract ${{ env.DOCKER_IMAGE_TAG_PR }}
 
       - name: Copy build output
-        run: docker cp extract:/app/${{ env.DIST_DIR }} ./${{ env.DIST_DIR }}
+        run: docker cp extract:/app/dist ${{ env.ARTIFACT_BUILD_PATH }}
 
       - name: Remove extraction container
         run: docker rm extract
 
       - name: Upload dist directory as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: dist-files
-          path: ${{ env.DIST_DIR }}
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_BUILD_PATH }}
 
   deploy:
     needs:
       - build_and_test
     runs-on: ubuntu-latest
     environment:
-      name: ${{ env.ENVIRONMENT_NAME }}
-      url: ${{ env.ENVIRONMENT_URL }}
+      name: Development
+      url: https://d3i19dhhon0a88.cloudfront.net
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Download dist directory
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: dist-files
-          path: ${{ env.DIST_DIR }}
+          name: ${{ env.ARTIFACT_NAME }}
+          path: ${{ env.ARTIFACT_BUILD_PATH }}
 
       - name: Deploy to S3
         uses: ./.github/actions/aws-s3-sync
@@ -81,7 +85,7 @@ jobs:
           bucket-name: ${{ secrets.S3_BUCKET_NAME }}
           cloudfront-distribution-id: ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
           aws-region: ${{ secrets.AWS_REGION }}
-          bundle-dir: ${{ env.DIST_DIR }}
+          bundle-dir: ${{ env.ARTIFACT_BUILD_PATH }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
