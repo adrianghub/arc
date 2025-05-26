@@ -56,6 +56,19 @@ export function getNextCharSuggestion(
   return "";
 }
 
+function isValidSpace(filteredStations: StationUIModel[], searchTerm: string): boolean {
+  const normalizedSearchTerm = searchTerm.toLowerCase();
+
+  return filteredStations.some((station) => {
+    const stationName = station.name.toLowerCase();
+    if (stationName.startsWith(normalizedSearchTerm)) {
+      const remainingPart = stationName.slice(normalizedSearchTerm.length);
+      return remainingPart.startsWith(" ") && remainingPart.length > 1;
+    }
+    return false;
+  });
+}
+
 /**
  * Gets all available next characters from the filtered stations.
  * Used for the "Available next characters" section.
@@ -68,22 +81,33 @@ export function getAvailableNextChars(
     return [];
   }
 
-  const normalizedSearchTerm = searchTerm.toLowerCase();
+  const normalizedSearchTerm = searchTerm.toLowerCase().trim();
   const nextCharsSet = new Set<string>();
 
-  const primaryNextChar = getNextCharSuggestion(filteredStations, searchTerm);
-  if (primaryNextChar) {
-    nextCharsSet.add(primaryNextChar);
+  const hasExactMatch = filteredStations.some(
+    (station) =>
+      station.name.toLowerCase().trim() === normalizedSearchTerm ||
+      station.code.toLowerCase().trim() === normalizedSearchTerm,
+  );
+
+  if (hasExactMatch) {
+    return [];
   }
 
   filteredStations.forEach((station) => {
-    const searchableText = `${station.name} ${station.code}`.toLowerCase();
+    const name = station.name.toLowerCase();
 
+    if (name.startsWith(normalizedSearchTerm) && normalizedSearchTerm.length < name.length) {
+      nextCharsSet.add(name[normalizedSearchTerm.length]);
+    }
+
+    const searchableText = `${station.name} ${station.code}`.toLowerCase();
     let index = searchableText.indexOf(normalizedSearchTerm);
     while (index !== -1) {
       if (index + normalizedSearchTerm.length < searchableText.length) {
         const nextChar = searchableText[index + normalizedSearchTerm.length];
-        if (/^[a-zA-Z0-9]$/.test(nextChar)) {
+        // Only add alphanumeric characters and spaces
+        if (/^[a-zA-Z0-9 ]$/.test(nextChar)) {
           nextCharsSet.add(nextChar);
         }
       }
@@ -91,11 +115,9 @@ export function getAvailableNextChars(
     }
   });
 
-  const result = Array.from(nextCharsSet);
-  if (primaryNextChar && result.includes(primaryNextChar)) {
-    result.splice(result.indexOf(primaryNextChar), 1);
-    result.unshift(primaryNextChar);
+  if (nextCharsSet.has(" ") && !isValidSpace(filteredStations, searchTerm)) {
+    nextCharsSet.delete(" ");
   }
 
-  return result;
+  return Array.from(nextCharsSet).sort();
 }
