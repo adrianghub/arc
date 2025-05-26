@@ -10,12 +10,7 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
-    environment:
-      name: Development
-      url: https://d3i19dhhon0a88.cloudfront.net
-    permissions: # Add permissions for OIDC
-      id-token: write
-      contents: read
+    environment: Development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -55,6 +50,9 @@ jobs:
     needs:
       - build_and_test
     runs-on: ubuntu-latest
+    environment:
+      name: Development
+      url: https://d3i19dhhon0a88.cloudfront.net
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
