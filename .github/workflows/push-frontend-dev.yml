@@ -52,7 +52,7 @@ jobs:
       - name: Remove extraction container
         run: docker rm extract
   deploy:
-    depends-on:
+    needs:
       - build_and_test
     runs-on: ubuntu-latest
     steps:
